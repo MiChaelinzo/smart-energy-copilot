@@ -96,6 +96,26 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Progression**: Metrics update automatically as devices change → User glances at bar for quick status → No interaction required
 - **Success criteria**: Updates in real-time, remains visible during scroll, compact design doesn't obstruct content
 
+### Real-Time Electricity Pricing Integration
+- **Functionality**: Display current electricity rates based on time-of-use (peak, off-peak, super off-peak), show rate schedule, calculate current cost per hour, predict next rate change, visualize potential savings through better timing
+- **Purpose**: Enables users to understand real-time pricing and optimize device usage to minimize costs during expensive peak hours
+- **Trigger**: User navigates to Pricing tab
+- **Progression**: View current rate → See hourly cost → Review rate schedule → Understand savings opportunities → Adjust device schedules accordingly
+- **Success criteria**: Rates update accurately based on time, calculations correct, savings opportunities clearly presented, schedule integration suggested
+
+### Predictive Maintenance Alerts
+- **Functionality**: AI-powered analysis of device performance patterns to detect efficiency degradation, predict maintenance needs, estimate remaining lifespan, identify anomalies, and provide actionable recommendations
+- **Purpose**: Prevents costly breakdowns, maintains optimal efficiency, reduces energy waste from poorly performing devices
+- **Trigger**: System continuously monitors device behavior, alerts appear when patterns detected
+- **Progression**: Anomaly detected → Prediction generated → Alert created with confidence score → User reviews details → Takes recommended action → Acknowledges or dismisses
+- **Success criteria**: Predictions are accurate and timely, recommendations actionable, confidence scores realistic, severity levels appropriate
+
+### Shareable Energy Achievements
+- **Functionality**: Gamified achievement system with unlockable badges for savings milestones, efficiency improvements, consistency streaks, and environmental impact; achievements can be shared as visual cards to social media or downloaded
+- **Purpose**: Motivates continued engagement through positive reinforcement, creates social proof and community around energy efficiency
+- **Trigger**: Achievements unlock automatically when criteria met, user can view and share from Achievements tab
+- **Progression**: Milestone reached → Achievement unlocked → Notification shown → User views in gallery → Optionally shares → Visual card generated → Copy or download
+- **Success criteria**: Achievements unlock reliably, visual cards attractive and shareable, social features work smoothly, tiers (bronze/silver/gold/platinum) feel meaningful
 
 ### Smart Scenes & Automation
 - **Functionality**: Create and manage energy-saving scenes (e.g., "Away Mode", "Sleep Mode"), set schedules, AI-adaptive routines
@@ -130,6 +150,12 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Report Generation During Low Data Period**: Generate report with available data, note incomplete period, provide partial insights
 - **Zero Power Consumption**: Handle edge case where all devices are off, show "idle state" messaging with encouragement
 - **Comparison with No Previous Data**: Display message that historical data not available, encourage continued usage for future comparisons
+- **Electricity Rate Not Found**: Fallback to average rate if current time doesn't match any rate period
+- **Multiple Rate Periods Overlap**: Use most specific/expensive rate when conflicts occur
+- **Maintenance Alert Overload**: Prioritize by severity, collapse acknowledged alerts, provide filter options
+- **False Positive Alerts**: Allow user dismissal, track feedback to improve prediction accuracy
+- **Achievement Already Unlocked**: Prevent duplicates, show unlock date for existing achievements
+- **Share Feature Unavailable**: Gracefully handle when clipboard or download fails, show alternative text-only share option
 
 ## Design Direction
 The design should evoke a sense of technological sophistication and environmental consciousness - feeling like a premium, cutting-edge energy management command center. It should balance data density with clarity, using intelligent visualization to make complex information digestible. The aesthetic should feel clean, modern, and subtly futuristic, with energy and efficiency themes woven throughout.

@@ -1,4 +1,4 @@
-import { Device, EnergyDataPoint, SmartScene, Notification, EnergyGoal, DeviceSchedule } from '@/types'
+import { Device, EnergyDataPoint, SmartScene, Notification, EnergyGoal, DeviceSchedule, ElectricityRate, MaintenanceAlert, Achievement } from '@/types'
 
 export const MOCK_DEVICES: Device[] = [
   {
@@ -250,5 +250,178 @@ export const MOCK_SCHEDULES: DeviceSchedule[] = [
     time: '10:00',
     days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
     enabled: false
+  }
+]
+
+export const MOCK_ELECTRICITY_RATES: ElectricityRate[] = [
+  {
+    id: 'rate-001',
+    name: 'Peak Hours',
+    type: 'peak',
+    rate: 0.28,
+    startHour: 16,
+    endHour: 21,
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    color: 'oklch(0.60 0.22 25)'
+  },
+  {
+    id: 'rate-002',
+    name: 'Super Off-Peak',
+    type: 'super-off-peak',
+    rate: 0.08,
+    startHour: 0,
+    endHour: 6,
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    color: 'oklch(0.65 0.18 150)'
+  },
+  {
+    id: 'rate-003',
+    name: 'Off-Peak',
+    type: 'off-peak',
+    rate: 0.12,
+    startHour: 21,
+    endHour: 16,
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    color: 'oklch(0.72 0.15 200)'
+  },
+  {
+    id: 'rate-004',
+    name: 'Weekend Rate',
+    type: 'off-peak',
+    rate: 0.10,
+    startHour: 6,
+    endHour: 24,
+    days: ['Sat', 'Sun'],
+    color: 'oklch(0.72 0.15 200)'
+  }
+]
+
+export const MOCK_MAINTENANCE_ALERTS: MaintenanceAlert[] = [
+  {
+    id: 'maint-001',
+    deviceId: 'dev-006',
+    deviceName: 'Water Heater',
+    severity: 'high',
+    type: 'efficiency',
+    title: 'Efficiency Degradation Detected',
+    description: 'Water heater is consuming 23% more energy than baseline for similar heating cycles.',
+    prediction: 'Without maintenance, energy consumption may increase by an additional 15% over the next 3 months.',
+    recommendation: 'Schedule sediment flush and heating element inspection within 2 weeks to restore efficiency.',
+    estimatedDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+    confidence: 87,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    acknowledged: false
+  },
+  {
+    id: 'maint-002',
+    deviceId: 'dev-002',
+    deviceName: 'Main HVAC',
+    severity: 'medium',
+    type: 'usage-pattern',
+    title: 'Filter Replacement Due Soon',
+    description: 'HVAC runtime has increased by 18% while maintaining same temperature, indicating restricted airflow.',
+    prediction: 'Filter replacement typically needed every 90 days. Current filter at 85 days of use.',
+    recommendation: 'Replace air filter within next week. Estimated cost: $25. Potential monthly savings: $15-20.',
+    estimatedDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    confidence: 92,
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    acknowledged: false
+  },
+  {
+    id: 'maint-003',
+    deviceId: 'dev-008',
+    deviceName: 'Patio Lights',
+    severity: 'critical',
+    type: 'anomaly',
+    title: 'Device Offline - Connection Issue',
+    description: 'Device has been offline for 48 hours. Last known status showed no error conditions.',
+    prediction: 'Possible causes: Power supply failure, network connectivity loss, or hardware malfunction.',
+    recommendation: 'Check power connection and circuit breaker. Reset device. If issue persists, contact support.',
+    confidence: 95,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    acknowledged: false
+  },
+  {
+    id: 'maint-004',
+    deviceId: 'dev-005',
+    deviceName: 'Office Outlet',
+    severity: 'low',
+    type: 'lifespan',
+    title: 'Optimal Performance Maintained',
+    description: 'Device is operating efficiently with no anomalies detected over the past 6 months.',
+    prediction: 'Expected remaining lifespan: 3-5 years with current usage patterns.',
+    recommendation: 'Continue monitoring. No action required at this time.',
+    confidence: 78,
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    acknowledged: true
+  }
+]
+
+export const MOCK_ACHIEVEMENTS: Achievement[] = [
+  {
+    id: 'ach-001',
+    title: 'Energy Saver',
+    description: 'Reduced energy consumption by 25% compared to previous month',
+    icon: 'Trophy',
+    category: 'savings',
+    tier: 'gold',
+    unlockedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    value: 25,
+    shareable: true
+  },
+  {
+    id: 'ach-002',
+    title: 'Peak Avoider',
+    description: 'Shifted 80% of high-consumption activities to off-peak hours',
+    icon: 'Clock',
+    category: 'efficiency',
+    tier: 'silver',
+    unlockedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    value: 80,
+    shareable: true
+  },
+  {
+    id: 'ach-003',
+    title: '30-Day Streak',
+    description: 'Met daily energy goals for 30 consecutive days',
+    icon: 'Fire',
+    category: 'consistency',
+    tier: 'platinum',
+    unlockedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    value: 30,
+    shareable: true
+  },
+  {
+    id: 'ach-004',
+    title: 'Carbon Warrior',
+    description: 'Prevented 500 lbs of CO₂ emissions this month',
+    icon: 'Leaf',
+    category: 'environmental',
+    tier: 'gold',
+    unlockedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    value: 500,
+    shareable: true
+  },
+  {
+    id: 'ach-005',
+    title: 'Smart Automator',
+    description: 'Created 5 smart scenes to optimize energy usage',
+    icon: 'Sparkle',
+    category: 'milestone',
+    tier: 'bronze',
+    unlockedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+    value: 5,
+    shareable: true
+  },
+  {
+    id: 'ach-006',
+    title: 'Cost Cutter',
+    description: 'Saved over $50 on energy bills this month',
+    icon: 'CurrencyDollar',
+    category: 'savings',
+    tier: 'gold',
+    unlockedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    value: 52.3,
+    shareable: true
   }
 ]

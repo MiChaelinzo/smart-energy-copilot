@@ -63,3 +63,44 @@ export function formatCarbon(lbs: number): string {
   }
   return `${lbs.toFixed(0)} lbs CO₂`
 }
+
+export function getCurrentElectricityRate(rates: any[], date: Date = new Date()): any | undefined {
+  const currentHour = date.getHours()
+  const currentDay = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()]
+
+  return rates.find(rate => {
+    const isRightDay = rate.days.includes(currentDay)
+    const isRightTime = rate.startHour <= rate.endHour
+      ? currentHour >= rate.startHour && currentHour < rate.endHour
+      : currentHour >= rate.startHour || currentHour < rate.endHour
+
+    return isRightDay && isRightTime
+  })
+}
+
+export function calculateCostWithRate(powerWatts: number, rate: number, hours: number = 1): number {
+  const kwh = (powerWatts / 1000) * hours
+  return kwh * rate
+}
+
+export function generateMaintenancePrediction(device: Device, historicalData?: any): {
+  needsMaintenance: boolean
+  confidence: number
+  recommendation: string
+} {
+  const baselineEfficiency = device.type === 'hvac' ? 2400 : device.type === 'appliance' ? 150 : 50
+  const currentEfficiency = device.power
+  const deviation = Math.abs(currentEfficiency - baselineEfficiency) / baselineEfficiency
+
+  const needsMaintenance = deviation > 0.15
+  const confidence = Math.min(95, 60 + deviation * 100)
+
+  let recommendation = 'Device is operating normally.'
+  if (deviation > 0.25) {
+    recommendation = 'Immediate maintenance recommended. Schedule professional inspection.'
+  } else if (deviation > 0.15) {
+    recommendation = 'Maintenance recommended within 2 weeks to restore efficiency.'
+  }
+
+  return { needsMaintenance, confidence, recommendation }
+}

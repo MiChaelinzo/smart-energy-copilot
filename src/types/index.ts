@@ -129,3 +129,56 @@ export interface EnergyReport {
   recommendations: string[]
   achievements: string[]
 }
+
+export interface ElectricityRate {
+  id: string
+  name: string
+  type: 'peak' | 'off-peak' | 'super-off-peak' | 'shoulder'
+  rate: number
+  startHour: number
+  endHour: number
+  days: string[]
+  color: string
+}
+
+export interface MaintenanceAlert {
+  id: string
+  deviceId: string
+  deviceName: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  type: 'efficiency' | 'usage-pattern' | 'lifespan' | 'anomaly'
+  title: string
+  description: string
+  prediction: string
+  recommendation: string
+  estimatedDate?: Date
+  confidence: number
+  createdAt: Date
+  acknowledged: boolean
+}
+
+export interface Achievement {
+  id: string
+  title: string
+  description: string
+  icon: string
+  category: 'savings' | 'efficiency' | 'consistency' | 'milestone' | 'environmental'
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum'
+  unlockedAt: Date
+  value?: number
+  shareable: boolean
+  shareUrl?: string
+  shareImage?: string
+}
+
+export interface ShareableCard {
+  id: string
+  type: 'achievement' | 'savings' | 'goal' | 'streak'
+  title: string
+  subtitle: string
+  metric: string
+  metricLabel: string
+  icon: string
+  color: string
+  timestamp: Date
+}

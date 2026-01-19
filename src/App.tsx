@@ -16,8 +16,20 @@ import { EnergyReports } from '@/components/EnergyReports'
 import { TotalSummaryPanel } from '@/components/TotalSummaryPanel'
 import { QuickStatsBar } from '@/components/QuickStatsBar'
 import { ComparisonPanel } from '@/components/ComparisonPanel'
-import { MOCK_DEVICES, MOCK_SCENES, MOCK_NOTIFICATIONS, MOCK_GOALS, MOCK_SCHEDULES } from '@/lib/mockData'
-import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule } from '@/types'
+import { ElectricityPricingPanel } from '@/components/ElectricityPricingPanel'
+import { MaintenanceAlertsPanel } from '@/components/MaintenanceAlertsPanel'
+import { AchievementsPanel } from '@/components/AchievementsPanel'
+import { 
+  MOCK_DEVICES, 
+  MOCK_SCENES, 
+  MOCK_NOTIFICATIONS, 
+  MOCK_GOALS, 
+  MOCK_SCHEDULES,
+  MOCK_ELECTRICITY_RATES,
+  MOCK_MAINTENANCE_ALERTS,
+  MOCK_ACHIEVEMENTS
+} from '@/lib/mockData'
+import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule, ElectricityRate, MaintenanceAlert, Achievement } from '@/types'
 import { Lightning, BellRinging } from '@phosphor-icons/react'
 
 function App() {
@@ -26,6 +38,9 @@ function App() {
   const [notifications, setNotifications] = useKV<Notification[]>('energy-notifications', MOCK_NOTIFICATIONS)
   const [goals, setGoals] = useKV<EnergyGoal[]>('energy-goals', MOCK_GOALS)
   const [schedules, setSchedules] = useKV<DeviceSchedule[]>('device-schedules', MOCK_SCHEDULES)
+  const [electricityRates] = useKV<ElectricityRate[]>('electricity-rates', MOCK_ELECTRICITY_RATES)
+  const [maintenanceAlerts, setMaintenanceAlerts] = useKV<MaintenanceAlert[]>('maintenance-alerts', MOCK_MAINTENANCE_ALERTS)
+  const [achievements] = useKV<Achievement[]>('achievements', MOCK_ACHIEVEMENTS)
   const [activeTab, setActiveTab] = useState('summary')
   const [showNotifications, setShowNotifications] = useState(false)
   const [showChat, setShowChat] = useState(false)
@@ -113,6 +128,25 @@ function App() {
 
   const handleDeleteSchedule = (scheduleId: string) => {
     setSchedules((currentSchedules) => (currentSchedules || []).filter(s => s.id !== scheduleId))
+  }
+
+  const handleAcknowledgeAlert = (alertId: string) => {
+    setMaintenanceAlerts((currentAlerts) => {
+      if (!currentAlerts) return MOCK_MAINTENANCE_ALERTS
+      return currentAlerts.map(alert =>
+        alert.id === alertId
+          ? { ...alert, acknowledged: true }
+          : alert
+      )
+    })
+  }
+
+  const handleDismissAlert = (alertId: string) => {
+    setMaintenanceAlerts((currentAlerts) => (currentAlerts || []).filter(a => a.id !== alertId))
+  }
+
+  const calculateCurrentPower = (): number => {
+    return (devices || MOCK_DEVICES).reduce((sum, device) => sum + (device.isOn ? device.power : 0), 0)
   }
 
 
@@ -205,7 +239,7 @@ function App() {
 
         <main className="container mx-auto px-6 py-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-3 lg:grid-cols-10 w-full max-w-6xl">
+            <TabsList className="grid grid-cols-3 lg:grid-cols-13 w-full max-w-full">
               <TabsTrigger value="summary">Summary</TabsTrigger>
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="devices">Devices</TabsTrigger>
@@ -215,6 +249,9 @@ function App() {
               <TabsTrigger value="goals">Goals</TabsTrigger>
               <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
               <TabsTrigger value="costs">Costs</TabsTrigger>
+              <TabsTrigger value="pricing">Pricing</TabsTrigger>
+              <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+              <TabsTrigger value="achievements">Achievements</TabsTrigger>
               <TabsTrigger value="reports">Reports</TabsTrigger>
             </TabsList>
 
@@ -272,6 +309,25 @@ function App() {
 
             <TabsContent value="costs" className="space-y-6">
               <CostAnalyticsPanel devices={devices || MOCK_DEVICES} />
+            </TabsContent>
+
+            <TabsContent value="pricing" className="space-y-6">
+              <ElectricityPricingPanel 
+                rates={electricityRates || MOCK_ELECTRICITY_RATES}
+                currentUsage={calculateCurrentPower()}
+              />
+            </TabsContent>
+
+            <TabsContent value="maintenance" className="space-y-6">
+              <MaintenanceAlertsPanel
+                alerts={maintenanceAlerts || MOCK_MAINTENANCE_ALERTS}
+                onAcknowledge={handleAcknowledgeAlert}
+                onDismiss={handleDismissAlert}
+              />
+            </TabsContent>
+
+            <TabsContent value="achievements" className="space-y-6">
+              <AchievementsPanel achievements={achievements || MOCK_ACHIEVEMENTS} />
             </TabsContent>
 
             <TabsContent value="reports" className="space-y-6">
