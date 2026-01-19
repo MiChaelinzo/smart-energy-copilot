@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Device, SmartScene } from '@/types'
-import '@/types/speech'
 
 interface VoiceCommand {
   transcript: string
