@@ -4,6 +4,7 @@ import { Progress } from '@/components/ui/progress'
 import { Device } from '@/types'
 import { Lightning, CurrencyDollar, Leaf, TrendUp, TrendDown, Sparkle } from '@phosphor-icons/react'
 import { EnergyChart } from './EnergyChart'
+import { VoiceCommandsGuide } from './VoiceCommandsGuide'
 import { generateEnergyData } from '@/lib/mockData'
 import { useEffect, useState } from 'react'
 
@@ -143,25 +144,29 @@ export function Dashboard({ devices }: DashboardProps) {
         </Card>
       </div>
 
-      <Card className="p-6 bg-card/50 backdrop-blur border-border/50">
-        <h3 className="text-xl font-semibold mb-4">Active Devices</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {devices.filter(d => d.isOn).slice(0, 4).map(device => (
-            <div
-              key={device.id}
-              className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 border border-border/50"
-            >
-              <div className="relative">
-                <div className="w-2 h-2 bg-success rounded-full pulse-glow" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-6 bg-card/50 backdrop-blur border-border/50">
+          <h3 className="text-xl font-semibold mb-4">Active Devices</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {devices.filter(d => d.isOn).slice(0, 4).map(device => (
+              <div
+                key={device.id}
+                className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 border border-border/50"
+              >
+                <div className="relative">
+                  <div className="w-2 h-2 bg-success rounded-full pulse-glow" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm truncate">{device.name}</div>
+                  <div className="text-xs text-muted-foreground">{device.power.toFixed(0)} W</div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm truncate">{device.name}</div>
-                <div className="text-xs text-muted-foreground">{device.power.toFixed(0)} W</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
+            ))}
+          </div>
+        </Card>
+
+        <VoiceCommandsGuide />
+      </div>
     </div>
   )
 }

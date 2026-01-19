@@ -7,6 +7,8 @@ import { AnalyticsPanel } from '@/components/AnalyticsPanel'
 import { ScenesPanel } from '@/components/ScenesPanel'
 import { AIAssistant } from '@/components/AIAssistant'
 import { NotificationCenter } from '@/components/NotificationCenter'
+import { VoiceControlPanel } from '@/components/VoiceControlPanel'
+import { VoiceButton } from '@/components/VoiceButton'
 import { MOCK_DEVICES, MOCK_SCENES, MOCK_NOTIFICATIONS } from '@/lib/mockData'
 import { Device, SmartScene, Notification } from '@/types'
 import { Lightning, BellRinging } from '@phosphor-icons/react'
@@ -18,6 +20,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [showNotifications, setShowNotifications] = useState(false)
   const [showChat, setShowChat] = useState(false)
+  const [showVoiceControl, setShowVoiceControl] = useState(false)
 
   const unreadCount = (notifications || []).filter(n => !n.read).length
 
@@ -171,12 +174,26 @@ function App() {
           onMarkAllRead={handleMarkAllRead}
         />
 
-        <button
-          onClick={() => setShowChat(!showChat)}
-          className="fixed bottom-6 right-6 bg-accent hover:bg-accent/90 text-accent-foreground p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 z-40"
-        >
-          <Lightning className="w-6 h-6" weight="fill" />
-        </button>
+        <VoiceControlPanel
+          isOpen={showVoiceControl}
+          onClose={() => setShowVoiceControl(false)}
+          devices={devices || MOCK_DEVICES}
+          scenes={scenes || MOCK_SCENES}
+          onDeviceToggle={handleDeviceToggle}
+          onSceneToggle={handleSceneToggle}
+        />
+
+        <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+          <VoiceButton
+            onClick={() => setShowVoiceControl(!showVoiceControl)}
+          />
+          <button
+            onClick={() => setShowChat(!showChat)}
+            className="bg-accent hover:bg-accent/90 text-accent-foreground p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105"
+          >
+            <Lightning className="w-6 h-6" weight="fill" />
+          </button>
+        </div>
       </div>
     </div>
   )

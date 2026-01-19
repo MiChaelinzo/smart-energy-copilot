@@ -33,6 +33,13 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Progression**: User inputs query → AI processes with context → Response with insights/actions → User can follow up → Conversational thread maintained
 - **Success criteria**: Responds intelligently to energy queries, provides actionable recommendations, maintains conversation context
 
+### Voice Command Control
+- **Functionality**: Hands-free device control via Web Speech API, natural language processing, multi-device commands
+- **Purpose**: Enables accessible, convenient control without touching the interface
+- **Trigger**: User clicks voice button or opens voice control panel
+- **Progression**: User taps microphone → Browser requests permission → User speaks command → Speech recognized → Command parsed → Action executed → Audio feedback provided
+- **Success criteria**: Recognizes device names and rooms, executes toggle commands, handles scenes, provides spoken feedback, shows visual confirmation
+
 ### Energy Analytics & Insights
 - **Functionality**: Historical data visualization, trend analysis, cost projections, optimization recommendations
 - **Purpose**: Helps users understand patterns and make informed decisions about energy usage
@@ -61,6 +68,10 @@ This requires multiple interconnected features including real-time monitoring, d
 - **AI Assistant Errors**: Fallback to helpful suggestions if LLM fails, maintain conversation history, show typing indicators
 - **Extreme Usage Spikes**: Highlight in red with alert badges, prompt for user review, suggest immediate actions
 - **Empty State Periods**: Show "no data" states with helpful context rather than blank charts
+- **Voice Recognition Unavailable**: Detect browser support, show clear messaging, fallback to manual controls
+- **Voice Command Ambiguity**: Request clarification, suggest similar devices, show current state before executing
+- **Microphone Permission Denied**: Clear instructions on how to enable, graceful degradation to text/touch input
+- **Background Noise Interference**: Show confidence score, allow retry, provide manual override option
 
 ## Design Direction
 The design should evoke a sense of technological sophistication and environmental consciousness - feeling like a premium, cutting-edge energy management command center. It should balance data density with clarity, using intelligent visualization to make complex information digestible. The aesthetic should feel clean, modern, and subtly futuristic, with energy and efficiency themes woven throughout.
@@ -129,6 +140,8 @@ Animations should feel responsive and purposeful, reinforcing the sense of a rea
   - DeviceMobile/Desktop/Lightbulb (device types),
   - ChartLine (analytics), 
   - Robot (AI assistant),
+  - Microphone/MicrophoneSlash (voice control),
+  - Waveform (audio activity),
   - CalendarDots (scheduling),
   - BellRinging (notifications),
   - Leaf (environmental impact),
