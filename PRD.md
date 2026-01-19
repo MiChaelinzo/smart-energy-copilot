@@ -75,6 +75,27 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Progression**: View report summary → Review key metrics → Read recommendations → Check achievements → Download report file
 - **Success criteria**: Reports contain accurate data, insights are valuable, downloads work reliably, format is readable
 
+### Total Summary & Aggregation
+- **Functionality**: Comprehensive overview displaying aggregated totals for power, costs, savings, carbon impact, device breakdowns, and room-level analysis
+- **Purpose**: Provides holistic "big picture" view of entire energy ecosystem with all metrics summed up in one place
+- **Trigger**: User selects Summary tab (default landing page)
+- **Progression**: View total metrics → Review device contributions → Check room breakdowns → Analyze goal progress → Understand system status
+- **Success criteria**: All calculations accurate, percentages add to 100%, visual breakdowns clear, updates in real-time
+
+### Period Comparison Tool
+- **Functionality**: Side-by-side comparison of energy usage across time periods (24h, 7d, 30d, 90d) against previous period or baseline
+- **Purpose**: Enables users to track improvement trends and identify areas where consumption increased
+- **Trigger**: User navigates to Compare tab
+- **Progression**: Select time range → Choose comparison type → View metrics comparison → Review device-level changes → Read summary insights
+- **Success criteria**: Comparisons mathematically accurate, trends clearly visualized, improvements highlighted positively, warnings for increases
+
+### Persistent Quick Stats Bar
+- **Functionality**: Always-visible summary bar showing current power draw, daily usage, monthly cost, and active device count
+- **Purpose**: Provides at-a-glance metrics without requiring navigation, keeping key totals accessible
+- **Trigger**: Automatically visible on all pages below header
+- **Progression**: Metrics update automatically as devices change → User glances at bar for quick status → No interaction required
+- **Success criteria**: Updates in real-time, remains visible during scroll, compact design doesn't obstruct content
+
 
 ### Smart Scenes & Automation
 - **Functionality**: Create and manage energy-saving scenes (e.g., "Away Mode", "Sleep Mode"), set schedules, AI-adaptive routines
@@ -107,6 +128,8 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Schedule Conflicts**: Detect overlapping schedules for same device, warn users, allow priority setting
 - **Cost Data Unavailable**: Use default rate estimates, allow manual rate configuration, show clear disclaimers
 - **Report Generation During Low Data Period**: Generate report with available data, note incomplete period, provide partial insights
+- **Zero Power Consumption**: Handle edge case where all devices are off, show "idle state" messaging with encouragement
+- **Comparison with No Previous Data**: Display message that historical data not available, encourage continued usage for future comparisons
 
 ## Design Direction
 The design should evoke a sense of technological sophistication and environmental consciousness - feeling like a premium, cutting-edge energy management command center. It should balance data density with clarity, using intelligent visualization to make complex information digestible. The aesthetic should feel clean, modern, and subtly futuristic, with energy and efficiency themes woven throughout.

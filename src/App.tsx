@@ -13,6 +13,9 @@ import { EnergyGoalsPanel } from '@/components/EnergyGoalsPanel'
 import { DeviceScheduler } from '@/components/DeviceScheduler'
 import { CostAnalyticsPanel } from '@/components/CostAnalyticsPanel'
 import { EnergyReports } from '@/components/EnergyReports'
+import { TotalSummaryPanel } from '@/components/TotalSummaryPanel'
+import { QuickStatsBar } from '@/components/QuickStatsBar'
+import { ComparisonPanel } from '@/components/ComparisonPanel'
 import { MOCK_DEVICES, MOCK_SCENES, MOCK_NOTIFICATIONS, MOCK_GOALS, MOCK_SCHEDULES } from '@/lib/mockData'
 import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule } from '@/types'
 import { Lightning, BellRinging } from '@phosphor-icons/react'
@@ -23,7 +26,7 @@ function App() {
   const [notifications, setNotifications] = useKV<Notification[]>('energy-notifications', MOCK_NOTIFICATIONS)
   const [goals, setGoals] = useKV<EnergyGoal[]>('energy-goals', MOCK_GOALS)
   const [schedules, setSchedules] = useKV<DeviceSchedule[]>('device-schedules', MOCK_SCHEDULES)
-  const [activeTab, setActiveTab] = useState('dashboard')
+  const [activeTab, setActiveTab] = useState('summary')
   const [showNotifications, setShowNotifications] = useState(false)
   const [showChat, setShowChat] = useState(false)
   const [showVoiceControl, setShowVoiceControl] = useState(false)
@@ -198,18 +201,29 @@ function App() {
           </div>
         </header>
 
+        <QuickStatsBar devices={devices || MOCK_DEVICES} />
+
         <main className="container mx-auto px-6 py-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-4 lg:grid-cols-8 w-full max-w-4xl">
+            <TabsList className="grid grid-cols-3 lg:grid-cols-10 w-full max-w-6xl">
+              <TabsTrigger value="summary">Summary</TabsTrigger>
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="devices">Devices</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="comparison">Compare</TabsTrigger>
               <TabsTrigger value="scenes">Scenes</TabsTrigger>
               <TabsTrigger value="goals">Goals</TabsTrigger>
               <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
               <TabsTrigger value="costs">Costs</TabsTrigger>
               <TabsTrigger value="reports">Reports</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="summary" className="space-y-6">
+              <TotalSummaryPanel 
+                devices={devices || MOCK_DEVICES}
+                goals={goals || MOCK_GOALS}
+              />
+            </TabsContent>
 
             <TabsContent value="dashboard" className="space-y-6">
               <Dashboard devices={devices || MOCK_DEVICES} onNavigate={setActiveTab} />
@@ -224,6 +238,10 @@ function App() {
 
             <TabsContent value="analytics" className="space-y-6">
               <AnalyticsPanel devices={devices || MOCK_DEVICES} />
+            </TabsContent>
+
+            <TabsContent value="comparison" className="space-y-6">
+              <ComparisonPanel devices={devices || MOCK_DEVICES} />
             </TabsContent>
 
             <TabsContent value="scenes" className="space-y-6">
