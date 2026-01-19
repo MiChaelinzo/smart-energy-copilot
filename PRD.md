@@ -47,6 +47,35 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Progression**: Select time range → View consumption charts → Compare periods → Identify patterns → Receive AI recommendations → Apply optimizations
 - **Success criteria**: Charts display accurate trends, comparisons are meaningful, recommendations are specific and actionable
 
+### Energy Goals & Gamification
+- **Functionality**: Set and track energy savings goals with progress visualization, achievement badges, and motivational feedback
+- **Purpose**: Motivates users to reduce energy consumption through gamified targets and milestone tracking
+- **Trigger**: User navigates to goals section or creates new goal
+- **Progression**: Create goal → Set target and timeframe → Monitor progress → Receive updates → Celebrate achievement → Set new goals
+- **Success criteria**: Goals update in real-time, progress bars reflect accurate data, achievements unlock appropriately, users feel motivated
+
+### Device Scheduling & Automation
+- **Functionality**: Create custom schedules for individual devices with time-based and day-based automation
+- **Purpose**: Enables precise control over when devices operate to maximize efficiency and convenience
+- **Trigger**: User navigates to scheduler or creates new schedule
+- **Progression**: Select device → Define action → Set time and days → Configure settings → Enable schedule → System executes automatically
+- **Success criteria**: Schedules execute reliably, conflicts are managed, users can easily enable/disable schedules
+
+### Cost Analytics & Breakdown
+- **Functionality**: Detailed cost analysis per device, time-of-use rate calculations, billing projections, and savings tracking
+- **Purpose**: Provides transparency into energy costs and identifies opportunities for bill reduction
+- **Trigger**: User navigates to costs section
+- **Progression**: View current costs → Analyze device breakdown → Review time-of-use impact → See projections → Apply cost-saving recommendations
+- **Success criteria**: Cost calculations are accurate, breakdowns are clear, projections match actual bills, tips are actionable
+
+### Energy Reports Generator
+- **Functionality**: Automated generation of comprehensive energy reports with downloadable summaries, insights, and recommendations
+- **Purpose**: Provides professional documentation of energy usage for tracking, sharing, or record-keeping
+- **Trigger**: User navigates to reports section or clicks download
+- **Progression**: View report summary → Review key metrics → Read recommendations → Check achievements → Download report file
+- **Success criteria**: Reports contain accurate data, insights are valuable, downloads work reliably, format is readable
+
+
 ### Smart Scenes & Automation
 - **Functionality**: Create and manage energy-saving scenes (e.g., "Away Mode", "Sleep Mode"), set schedules, AI-adaptive routines
 - **Purpose**: Automates energy optimization based on behavior patterns and preferences
@@ -72,6 +101,12 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Voice Command Ambiguity**: Request clarification, suggest similar devices, show current state before executing
 - **Microphone Permission Denied**: Clear instructions on how to enable, graceful degradation to text/touch input
 - **Background Noise Interference**: Show confidence score, allow retry, provide manual override option
+- **No Goals Set**: Display empty state with compelling call-to-action and example goals to inspire users
+- **No Schedules Created**: Show helpful onboarding state with templates and suggestions for common automation patterns
+- **Goal Already Achieved**: Show celebration UI, suggest new challenging goals, maintain achievement history
+- **Schedule Conflicts**: Detect overlapping schedules for same device, warn users, allow priority setting
+- **Cost Data Unavailable**: Use default rate estimates, allow manual rate configuration, show clear disclaimers
+- **Report Generation During Low Data Period**: Generate report with available data, note incomplete period, provide partial insights
 
 ## Design Direction
 The design should evoke a sense of technological sophistication and environmental consciousness - feeling like a premium, cutting-edge energy management command center. It should balance data density with clarity, using intelligent visualization to make complex information digestible. The aesthetic should feel clean, modern, and subtly futuristic, with energy and efficiency themes woven throughout.
@@ -143,11 +178,23 @@ Animations should feel responsive and purposeful, reinforcing the sense of a rea
   - Microphone/MicrophoneSlash (voice control),
   - Waveform (audio activity),
   - CalendarDots (scheduling),
+  - Clock (time/schedules),
   - BellRinging (notifications),
   - Leaf (environmental impact),
   - CurrencyDollar (cost savings),
   - ToggleLeft/Right (controls),
-  - Sparkle (AI insights)
+  - Sparkle (AI insights),
+  - Target (goals),
+  - Trophy (achievements),
+  - TrendUp/TrendDown (trends),
+  - Plus (add new items),
+  - Trash (delete),
+  - Power (device power),
+  - SlidersHorizontal (adjust settings),
+  - Download (export/download),
+  - FileText (reports),
+  - Receipt (billing),
+  - CheckCircle (completion)
 - **Spacing**: 
   - Container padding: `p-6` (24px)
   - Card internal padding: `p-4` (16px)

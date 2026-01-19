@@ -69,3 +69,63 @@ export interface Prediction {
   timeframe: string
   recommendation?: string
 }
+
+export interface EnergyGoal {
+  id: string
+  name: string
+  type: 'usage' | 'cost' | 'carbon'
+  target: number
+  current: number
+  period: 'daily' | 'weekly' | 'monthly'
+  startDate: Date
+  endDate: Date
+  achieved: boolean
+}
+
+export interface DeviceSchedule {
+  id: string
+  deviceId: string
+  name: string
+  action: 'on' | 'off' | 'adjust'
+  time: string
+  days: string[]
+  enabled: boolean
+  settings?: {
+    temperature?: number
+    brightness?: number
+  }
+}
+
+export interface CostBreakdown {
+  deviceCosts: Array<{
+    deviceId: string
+    deviceName: string
+    cost: number
+    percentage: number
+  }>
+  timeOfUseCosts: Array<{
+    period: string
+    cost: number
+    rate: number
+  }>
+  projectedMonthly: number
+  comparisonLastMonth: number
+}
+
+export interface EnergyReport {
+  id: string
+  period: string
+  startDate: Date
+  endDate: Date
+  totalConsumption: number
+  totalCost: number
+  savings: number
+  carbonReduction: number
+  topDevices: Array<{
+    name: string
+    consumption: number
+    cost: number
+  }>
+  recommendations: string[]
+  achievements: string[]
+}

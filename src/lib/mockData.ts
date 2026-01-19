@@ -1,4 +1,4 @@
-import { Device, EnergyDataPoint, SmartScene, Notification } from '@/types'
+import { Device, EnergyDataPoint, SmartScene, Notification, EnergyGoal, DeviceSchedule } from '@/types'
 
 export const MOCK_DEVICES: Device[] = [
   {
@@ -173,5 +173,82 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
     message: 'Evening routine started at 10:00 PM',
     timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000),
     read: true
+  }
+]
+
+export const MOCK_GOALS: EnergyGoal[] = [
+  {
+    id: 'goal-001',
+    name: 'Reduce Monthly Energy Cost',
+    type: 'cost',
+    target: 150,
+    current: 123.45,
+    period: 'monthly',
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    achieved: false
+  },
+  {
+    id: 'goal-002',
+    name: 'Daily Usage Target',
+    type: 'usage',
+    target: 80,
+    current: 67.8,
+    period: 'daily',
+    startDate: new Date(),
+    endDate: new Date(),
+    achieved: false
+  },
+  {
+    id: 'goal-003',
+    name: 'Carbon Reduction',
+    type: 'carbon',
+    target: 500,
+    current: 487,
+    period: 'monthly',
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    achieved: false
+  }
+]
+
+export const MOCK_SCHEDULES: DeviceSchedule[] = [
+  {
+    id: 'sched-001',
+    deviceId: 'dev-001',
+    name: 'Living Room Lights - Evening',
+    action: 'on',
+    time: '18:00',
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    enabled: true,
+    settings: { brightness: 70 }
+  },
+  {
+    id: 'sched-002',
+    deviceId: 'dev-001',
+    name: 'Living Room Lights - Bedtime',
+    action: 'off',
+    time: '22:30',
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Sun'],
+    enabled: true
+  },
+  {
+    id: 'sched-003',
+    deviceId: 'dev-002',
+    name: 'HVAC - Night Mode',
+    action: 'adjust',
+    time: '22:00',
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    enabled: true,
+    settings: { temperature: 68 }
+  },
+  {
+    id: 'sched-004',
+    deviceId: 'dev-006',
+    name: 'Water Heater - Off Peak',
+    action: 'off',
+    time: '10:00',
+    days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    enabled: false
   }
 ]

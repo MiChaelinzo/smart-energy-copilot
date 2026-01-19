@@ -5,14 +5,16 @@ import { Device } from '@/types'
 import { Lightning, CurrencyDollar, Leaf, TrendUp, TrendDown, Sparkle } from '@phosphor-icons/react'
 import { EnergyChart } from './EnergyChart'
 import { VoiceCommandsGuide } from './VoiceCommandsGuide'
+import { QuickActions } from './QuickActions'
 import { generateEnergyData } from '@/lib/mockData'
 import { useEffect, useState } from 'react'
 
 interface DashboardProps {
   devices: Device[]
+  onNavigate?: (tab: string) => void
 }
 
-export function Dashboard({ devices }: DashboardProps) {
+export function Dashboard({ devices, onNavigate }: DashboardProps) {
   const [energyData] = useState(generateEnergyData(24))
   const [metrics, setMetrics] = useState({
     currentPower: 0,
@@ -167,6 +169,10 @@ export function Dashboard({ devices }: DashboardProps) {
 
         <VoiceCommandsGuide />
       </div>
+
+      {onNavigate && (
+        <QuickActions onNavigate={onNavigate} />
+      )}
     </div>
   )
 }

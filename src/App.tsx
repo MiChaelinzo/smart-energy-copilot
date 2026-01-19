@@ -9,14 +9,20 @@ import { AIAssistant } from '@/components/AIAssistant'
 import { NotificationCenter } from '@/components/NotificationCenter'
 import { VoiceControlPanel } from '@/components/VoiceControlPanel'
 import { VoiceButton } from '@/components/VoiceButton'
-import { MOCK_DEVICES, MOCK_SCENES, MOCK_NOTIFICATIONS } from '@/lib/mockData'
-import { Device, SmartScene, Notification } from '@/types'
+import { EnergyGoalsPanel } from '@/components/EnergyGoalsPanel'
+import { DeviceScheduler } from '@/components/DeviceScheduler'
+import { CostAnalyticsPanel } from '@/components/CostAnalyticsPanel'
+import { EnergyReports } from '@/components/EnergyReports'
+import { MOCK_DEVICES, MOCK_SCENES, MOCK_NOTIFICATIONS, MOCK_GOALS, MOCK_SCHEDULES } from '@/lib/mockData'
+import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule } from '@/types'
 import { Lightning, BellRinging } from '@phosphor-icons/react'
 
 function App() {
   const [devices, setDevices] = useKV<Device[]>('energy-devices', MOCK_DEVICES)
   const [scenes, setScenes] = useKV<SmartScene[]>('energy-scenes', MOCK_SCENES)
   const [notifications, setNotifications] = useKV<Notification[]>('energy-notifications', MOCK_NOTIFICATIONS)
+  const [goals, setGoals] = useKV<EnergyGoal[]>('energy-goals', MOCK_GOALS)
+  const [schedules, setSchedules] = useKV<DeviceSchedule[]>('device-schedules', MOCK_SCHEDULES)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [showNotifications, setShowNotifications] = useState(false)
   const [showChat, setShowChat] = useState(false)
@@ -69,6 +75,44 @@ function App() {
     })
   }
 
+  const handleAddGoal = (goal: Omit<EnergyGoal, 'id' | 'current' | 'achieved'>) => {
+    const newGoal: EnergyGoal = {
+      ...goal,
+      id: `goal-${Date.now()}`,
+      current: 0,
+      achieved: false
+    }
+    setGoals((currentGoals) => [...(currentGoals || []), newGoal])
+  }
+
+  const handleDeleteGoal = (goalId: string) => {
+    setGoals((currentGoals) => (currentGoals || []).filter(g => g.id !== goalId))
+  }
+
+  const handleAddSchedule = (schedule: Omit<DeviceSchedule, 'id'>) => {
+    const newSchedule: DeviceSchedule = {
+      ...schedule,
+      id: `sched-${Date.now()}`
+    }
+    setSchedules((currentSchedules) => [...(currentSchedules || []), newSchedule])
+  }
+
+  const handleToggleSchedule = (scheduleId: string) => {
+    setSchedules((currentSchedules) => {
+      if (!currentSchedules) return MOCK_SCHEDULES
+      return currentSchedules.map(sched =>
+        sched.id === scheduleId
+          ? { ...sched, enabled: !sched.enabled }
+          : sched
+      )
+    })
+  }
+
+  const handleDeleteSchedule = (scheduleId: string) => {
+    setSchedules((currentSchedules) => (currentSchedules || []).filter(s => s.id !== scheduleId))
+  }
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       setDevices((currentDevices) => {
@@ -89,6 +133,34 @@ function App() {
 
     return () => clearInterval(interval)
   }, [setDevices])
+
+  useEffect(() => {
+    setGoals((currentGoals) => {
+      if (!currentGoals) return MOCK_GOALS
+      const totalPower = (devices || []).reduce((sum, d) => sum + (d.isOn ? d.power : 0), 0)
+      const dailyUsage = (totalPower / 1000) * 24
+      const monthlyCost = dailyUsage * 30 * 0.12
+      const carbonReduction = dailyUsage * 30 * 0.92
+
+      return currentGoals.map(goal => {
+        let newCurrent = goal.current
+
+        if (goal.type === 'usage' && goal.period === 'daily') {
+          newCurrent = dailyUsage * 0.85
+        } else if (goal.type === 'cost' && goal.period === 'monthly') {
+          newCurrent = monthlyCost * 0.82
+        } else if (goal.type === 'carbon' && goal.period === 'monthly') {
+          newCurrent = carbonReduction * 0.95
+        }
+
+        return {
+          ...goal,
+          current: newCurrent,
+          achieved: newCurrent >= goal.target
+        }
+      })
+    })
+  }, [devices, setGoals])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary">
@@ -128,15 +200,19 @@ function App() {
 
         <main className="container mx-auto px-6 py-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-4 w-full max-w-2xl">
+            <TabsList className="grid grid-cols-4 lg:grid-cols-8 w-full max-w-4xl">
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="devices">Devices</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="scenes">Scenes</TabsTrigger>
+              <TabsTrigger value="goals">Goals</TabsTrigger>
+              <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
+              <TabsTrigger value="costs">Costs</TabsTrigger>
+              <TabsTrigger value="reports">Reports</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard" className="space-y-6">
-              <Dashboard devices={devices || MOCK_DEVICES} />
+              <Dashboard devices={devices || MOCK_DEVICES} onNavigate={setActiveTab} />
             </TabsContent>
 
             <TabsContent value="devices" className="space-y-6">
@@ -155,6 +231,35 @@ function App() {
                 scenes={scenes || MOCK_SCENES}
                 devices={devices || MOCK_DEVICES}
                 onSceneToggle={handleSceneToggle}
+              />
+            </TabsContent>
+
+            <TabsContent value="goals" className="space-y-6">
+              <EnergyGoalsPanel
+                goals={goals || MOCK_GOALS}
+                onAddGoal={handleAddGoal}
+                onDeleteGoal={handleDeleteGoal}
+              />
+            </TabsContent>
+
+            <TabsContent value="scheduler" className="space-y-6">
+              <DeviceScheduler
+                schedules={schedules || MOCK_SCHEDULES}
+                devices={devices || MOCK_DEVICES}
+                onAddSchedule={handleAddSchedule}
+                onToggleSchedule={handleToggleSchedule}
+                onDeleteSchedule={handleDeleteSchedule}
+              />
+            </TabsContent>
+
+            <TabsContent value="costs" className="space-y-6">
+              <CostAnalyticsPanel devices={devices || MOCK_DEVICES} />
+            </TabsContent>
+
+            <TabsContent value="reports" className="space-y-6">
+              <EnergyReports
+                devices={devices || MOCK_DEVICES}
+                goals={goals || MOCK_GOALS}
               />
             </TabsContent>
           </Tabs>
