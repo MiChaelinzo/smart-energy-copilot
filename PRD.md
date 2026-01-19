@@ -76,11 +76,11 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Success criteria**: Reports contain accurate data, insights are valuable, downloads work reliably, format is readable
 
 ### Total Summary & Aggregation
-- **Functionality**: Comprehensive overview displaying aggregated totals for power, costs, savings, carbon impact, device breakdowns, and room-level analysis
-- **Purpose**: Provides holistic "big picture" view of entire energy ecosystem with all metrics summed up in one place
+- **Functionality**: Comprehensive overview displaying aggregated totals for power, costs, savings, carbon impact, device breakdowns, room-level analysis, device type analysis, time-of-use rates, environmental equivalencies, and efficiency insights
+- **Purpose**: Provides holistic "big picture" view of entire energy ecosystem with all metrics summed up in one place with deep analytical breakdowns
 - **Trigger**: User selects Summary tab (default landing page)
-- **Progression**: View total metrics → Review device contributions → Check room breakdowns → Analyze goal progress → Understand system status
-- **Success criteria**: All calculations accurate, percentages add to 100%, visual breakdowns clear, updates in real-time
+- **Progression**: View total metrics → Review device contributions → Check room breakdowns → Analyze device types → Compare time-of-use rates → Understand environmental impact → Review efficiency insights → Check goal progress → Understand system status
+- **Success criteria**: All calculations accurate, percentages add to 100%, visual breakdowns clear, updates in real-time, environmental equivalencies relatable, efficiency insights actionable
 
 ### Period Comparison Tool
 - **Functionality**: Side-by-side comparison of energy usage across time periods (24h, 7d, 30d, 90d) against previous period or baseline

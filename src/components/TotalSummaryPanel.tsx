@@ -12,7 +12,18 @@ import {
   TrendDown,
   ChartPie,
   Calculator,
-  Target
+  Target,
+  Lightbulb,
+  Thermometer,
+  Cookie,
+  Plug,
+  Eye,
+  Clock,
+  Tree,
+  Car,
+  House,
+  Star,
+  CheckCircle
 } from '@phosphor-icons/react'
 
 interface TotalSummaryPanelProps {
@@ -34,9 +45,17 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
     const monthlyConsumption = dailyConsumption * 30
     
     const costPerKwh = 0.12
+    const peakRate = 0.18
+    const offPeakRate = 0.08
     const dailyCost = dailyConsumption * costPerKwh
     const weeklyCost = weeklyConsumption * costPerKwh
     const monthlyCost = monthlyConsumption * costPerKwh
+    
+    const peakHoursConsumption = dailyConsumption * 0.45
+    const offPeakConsumption = dailyConsumption * 0.55
+    const peakCost = peakHoursConsumption * peakRate
+    const offPeakCost = offPeakConsumption * offPeakRate
+    const timeOfUseCost = peakCost + offPeakCost
     
     const carbonPerKwh = 0.92
     const dailyCarbon = dailyConsumption * carbonPerKwh
@@ -51,32 +70,61 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
     const yearlySavings = monthlySavings * 12
     const yearlyCarbon = monthlyCarbon * 12
     
+    const treesEquivalent = (monthlyCarbon / 48)
+    const carMilesEquivalent = (monthlyConsumption * 0.62)
+    const homesEquivalent = monthlyConsumption / 877
+    
     const deviceBreakdown = devices
       .filter(d => d.isOn)
       .map(device => ({
         id: device.id,
         name: device.name,
+        type: device.type,
         power: device.power,
         percentage: totalPower > 0 ? (device.power / totalPower) * 100 : 0,
-        dailyCost: (device.power / 1000) * 24 * costPerKwh
+        dailyCost: (device.power / 1000) * 24 * costPerKwh,
+        efficiency: device.power > 0 ? (device.power / 1000) : 0
+      }))
+      .sort((a, b) => b.power - a.power)
+    
+    const typeBreakdown = devices.reduce((acc, device) => {
+      if (!device.isOn) return acc
+      if (!acc[device.type]) {
+        acc[device.type] = { power: 0, cost: 0, count: 0 }
+      }
+      acc[device.type].power += device.power
+      acc[device.type].cost += (device.power / 1000) * 24 * costPerKwh
+      acc[device.type].count += 1
+      return acc
+    }, {} as Record<string, { power: number; cost: number; count: number }>)
+    
+    const typeStats = Object.entries(typeBreakdown)
+      .map(([type, stats]) => ({
+        type,
+        power: stats.power,
+        cost: stats.cost,
+        count: stats.count,
+        percentage: totalPower > 0 ? (stats.power / totalPower) * 100 : 0
       }))
       .sort((a, b) => b.power - a.power)
     
     const roomBreakdown = devices.reduce((acc, device) => {
       if (!device.isOn) return acc
       if (!acc[device.room]) {
-        acc[device.room] = { power: 0, cost: 0 }
+        acc[device.room] = { power: 0, cost: 0, count: 0 }
       }
       acc[device.room].power += device.power
       acc[device.room].cost += (device.power / 1000) * 24 * costPerKwh
+      acc[device.room].count += 1
       return acc
-    }, {} as Record<string, { power: number; cost: number }>)
+    }, {} as Record<string, { power: number; cost: number; count: number }>)
     
     const roomStats = Object.entries(roomBreakdown)
       .map(([room, stats]) => ({
         room,
         power: stats.power,
         cost: stats.cost,
+        count: stats.count,
         percentage: totalPower > 0 ? (stats.power / totalPower) * 100 : 0
       }))
       .sort((a, b) => b.power - a.power)
@@ -86,6 +134,10 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
       percentage: goal.target > 0 ? (goal.current / goal.target) * 100 : 0,
       remaining: Math.max(0, goal.target - goal.current)
     }))
+    
+    const topConsumer = deviceBreakdown[0]
+    const leastConsumer = deviceBreakdown[deviceBreakdown.length - 1]
+    const avgDevicePower = activeDevices.length > 0 ? totalPower / activeDevices.length : 0
     
     return {
       devices: {
@@ -98,7 +150,8 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
         current: totalPower,
         daily: dailyConsumption,
         weekly: weeklyConsumption,
-        monthly: monthlyConsumption
+        monthly: monthlyConsumption,
+        average: avgDevicePower
       },
       cost: {
         daily: dailyCost,
@@ -106,7 +159,14 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
         monthly: monthlyCost,
         savings: monthlySavings,
         savingsPercentage,
-        yearly: yearlySavings
+        yearly: yearlySavings,
+        timeOfUse: {
+          peak: peakCost,
+          offPeak: offPeakCost,
+          total: timeOfUseCost,
+          peakConsumption: peakHoursConsumption,
+          offPeakConsumption: offPeakConsumption
+        }
       },
       carbon: {
         daily: dailyCarbon,
@@ -114,9 +174,21 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
         monthly: monthlyCarbon,
         yearly: yearlyCarbon
       },
+      environmental: {
+        trees: treesEquivalent,
+        carMiles: carMilesEquivalent,
+        homes: homesEquivalent
+      },
       breakdown: {
         devices: deviceBreakdown,
-        rooms: roomStats
+        rooms: roomStats,
+        types: typeStats
+      },
+      insights: {
+        topConsumer,
+        leastConsumer,
+        mostEfficientRoom: roomStats[roomStats.length - 1],
+        leastEfficientRoom: roomStats[0]
       },
       goals: goalProgress
     }
@@ -345,6 +417,252 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
                 </div>
               </div>
             ))}
+          </div>
+        </Card>
+      )}
+
+      <Card className="p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Lightning className="w-5 h-5 text-primary" weight="fill" />
+          <h3 className="text-lg font-semibold">Device Type Breakdown</h3>
+          <Badge variant="secondary" className="ml-auto">
+            {summary.breakdown.types.length} Types
+          </Badge>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          {summary.breakdown.types.map((type) => {
+            const TypeIcon = type.type === 'light' ? Lightbulb :
+                            type.type === 'hvac' ? Thermometer :
+                            type.type === 'appliance' ? Cookie :
+                            type.type === 'sensor' ? Eye :
+                            Plug
+            
+            return (
+              <div key={type.type} className="p-4 rounded-lg bg-muted/50 border border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <TypeIcon className="w-4 h-4 text-primary" weight="fill" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium capitalize">{type.type}s</p>
+                    <p className="text-xs text-muted-foreground">{type.count} active</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Power</span>
+                    <span className="font-medium">{(type.power / 1000).toFixed(2)}kW</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Daily</span>
+                    <span className="font-medium">${type.cost.toFixed(2)}</span>
+                  </div>
+                  <Progress value={type.percentage} className="h-1.5 mt-2" />
+                  <p className="text-xs text-muted-foreground text-right">
+                    {type.percentage.toFixed(1)}% of total
+                  </p>
+                </div>
+              </div>
+            )
+          })}
+          {summary.breakdown.types.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4 col-span-full">
+              No active device types consuming power
+            </p>
+          )}
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock className="w-5 h-5 text-primary" weight="fill" />
+            <h3 className="text-lg font-semibold">Time-of-Use Analysis</h3>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-warning">Peak Hours (7am-9pm)</span>
+                <Badge variant="outline" className="border-warning text-warning">$0.18/kWh</Badge>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-muted-foreground">Consumption</span>
+                <span className="text-sm font-semibold">{summary.cost.timeOfUse.peakConsumption.toFixed(2)} kWh/day</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Daily Cost</span>
+                <span className="text-sm font-semibold">${summary.cost.timeOfUse.peak.toFixed(2)}</span>
+              </div>
+              <Progress value={45} className="h-1.5 mt-3 bg-warning/20" />
+            </div>
+
+            <div className="p-4 rounded-lg bg-success/10 border border-success/20">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-success">Off-Peak (9pm-7am)</span>
+                <Badge variant="outline" className="border-success text-success">$0.08/kWh</Badge>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-muted-foreground">Consumption</span>
+                <span className="text-sm font-semibold">{summary.cost.timeOfUse.offPeakConsumption.toFixed(2)} kWh/day</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Daily Cost</span>
+                <span className="text-sm font-semibold">${summary.cost.timeOfUse.offPeak.toFixed(2)}</span>
+              </div>
+              <Progress value={55} className="h-1.5 mt-3 bg-success/20" />
+            </div>
+
+            <Separator />
+
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Combined Daily Cost</span>
+              <span className="text-lg font-bold">${summary.cost.timeOfUse.total.toFixed(2)}</span>
+            </div>
+            <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
+              <p className="text-xs text-muted-foreground">
+                💡 Tip: Shift {((summary.cost.timeOfUse.peakConsumption * 0.3)).toFixed(1)} kWh to off-peak hours to save 
+                <span className="font-medium text-accent"> ${((summary.cost.timeOfUse.peakConsumption * 0.3) * (0.18 - 0.08)).toFixed(2)}/day</span>
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Leaf className="w-5 h-5 text-primary" weight="fill" />
+            <h3 className="text-lg font-semibold">Environmental Impact</h3>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="text-center p-4 rounded-lg bg-gradient-to-br from-success/10 to-success/5 border border-success/20">
+              <p className="text-sm text-muted-foreground mb-2">Monthly Carbon Reduction</p>
+              <p className="text-4xl font-bold text-success mb-1">{summary.carbon.monthly.toFixed(0)}</p>
+              <p className="text-sm text-muted-foreground">lbs CO₂</p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <div className="p-2 rounded-lg bg-success/20">
+                  <Tree className="w-5 h-5 text-success" weight="fill" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Trees Planted Equivalent</p>
+                  <p className="text-xs text-muted-foreground">Carbon offset per month</p>
+                </div>
+                <p className="text-lg font-bold text-success">{summary.environmental.trees.toFixed(1)}</p>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <div className="p-2 rounded-lg bg-accent/20">
+                  <Car className="w-5 h-5 text-accent" weight="fill" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Car Miles Avoided</p>
+                  <p className="text-xs text-muted-foreground">Equivalent emissions saved</p>
+                </div>
+                <p className="text-lg font-bold text-accent">{summary.environmental.carMiles.toFixed(0)}</p>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <div className="p-2 rounded-lg bg-primary/20">
+                  <House className="w-5 h-5 text-primary" weight="fill" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Home Energy Months</p>
+                  <p className="text-xs text-muted-foreground">Average home consumption</p>
+                </div>
+                <p className="text-lg font-bold text-primary">{summary.environmental.homes.toFixed(2)}</p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-lg bg-success/10 border border-success/20">
+              <p className="text-xs text-muted-foreground">
+                🌍 Your yearly impact: <span className="font-medium text-success">{summary.environmental.trees * 12}</span> trees worth of CO₂ reduction
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {summary.insights.topConsumer && (
+        <Card className="p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Star className="w-5 h-5 text-primary" weight="fill" />
+            <h3 className="text-lg font-semibold">Efficiency Insights</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+              <div className="flex items-center gap-2 mb-2">
+                <TrendUp className="w-4 h-4 text-destructive" weight="bold" />
+                <p className="text-xs font-medium text-destructive">Top Consumer</p>
+              </div>
+              <p className="text-lg font-bold mb-1">{summary.insights.topConsumer.name}</p>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Power Draw</span>
+                <span className="font-medium">{summary.insights.topConsumer.power.toFixed(0)}W</span>
+              </div>
+              <div className="flex justify-between text-xs mt-1">
+                <span className="text-muted-foreground">Daily Cost</span>
+                <span className="font-medium">${summary.insights.topConsumer.dailyCost.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {summary.insights.leastConsumer && (
+              <div className="p-4 rounded-lg bg-success/10 border border-success/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="w-4 h-4 text-success" weight="fill" />
+                  <p className="text-xs font-medium text-success">Most Efficient</p>
+                </div>
+                <p className="text-lg font-bold mb-1">{summary.insights.leastConsumer.name}</p>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Power Draw</span>
+                  <span className="font-medium">{summary.insights.leastConsumer.power.toFixed(0)}W</span>
+                </div>
+                <div className="flex justify-between text-xs mt-1">
+                  <span className="text-muted-foreground">Daily Cost</span>
+                  <span className="font-medium">${summary.insights.leastConsumer.dailyCost.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
+
+            {summary.insights.mostEfficientRoom && (
+              <div className="p-4 rounded-lg bg-accent/10 border border-accent/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendDown className="w-4 h-4 text-accent" weight="bold" />
+                  <p className="text-xs font-medium text-accent">Most Efficient Room</p>
+                </div>
+                <p className="text-lg font-bold mb-1">{summary.insights.mostEfficientRoom.room}</p>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Total Power</span>
+                  <span className="font-medium">{(summary.insights.mostEfficientRoom.power / 1000).toFixed(2)}kW</span>
+                </div>
+                <div className="flex justify-between text-xs mt-1">
+                  <span className="text-muted-foreground">{summary.insights.mostEfficientRoom.count} devices</span>
+                  <span className="font-medium">${summary.insights.mostEfficientRoom.cost.toFixed(2)}/day</span>
+                </div>
+              </div>
+            )}
+
+            {summary.insights.leastEfficientRoom && (
+              <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrendUp className="w-4 h-4 text-warning" weight="bold" />
+                  <p className="text-xs font-medium text-warning">Highest Usage Room</p>
+                </div>
+                <p className="text-lg font-bold mb-1">{summary.insights.leastEfficientRoom.room}</p>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Total Power</span>
+                  <span className="font-medium">{(summary.insights.leastEfficientRoom.power / 1000).toFixed(2)}kW</span>
+                </div>
+                <div className="flex justify-between text-xs mt-1">
+                  <span className="text-muted-foreground">{summary.insights.leastEfficientRoom.count} devices</span>
+                  <span className="font-medium">${summary.insights.leastEfficientRoom.cost.toFixed(2)}/day</span>
+                </div>
+              </div>
+            )}
           </div>
         </Card>
       )}
