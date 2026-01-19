@@ -12,6 +12,7 @@ import {
   Lightning
 } from '@phosphor-icons/react'
 import { useState } from 'react'
+import { ensureDate } from '@/lib/utils'
 
 interface DevicesPanelProps {
   devices: Device[]
@@ -196,7 +197,7 @@ function DeviceCard({ device, onToggle }: DeviceCardProps) {
         )}
 
         <div className="text-xs text-muted-foreground pt-2">
-          Last updated: {new Date(device.lastUpdate).toLocaleTimeString()}
+          Last updated: {ensureDate(device.lastUpdate).toLocaleTimeString()}
         </div>
       </div>
     </Card>

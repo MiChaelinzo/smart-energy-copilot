@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Plus, Target, TrendUp, Leaf, CurrencyDollar, Lightning, Trophy, CheckCircle } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
+import { ensureDate } from '@/lib/utils'
 
 interface EnergyGoalsPanelProps {
   goals: EnergyGoal[]
@@ -178,7 +179,8 @@ export function EnergyGoalsPanel({ goals, onAddGoal, onDeleteGoal }: EnergyGoals
         {goals.map((goal, index) => {
           const progress = Math.min((goal.current / goal.target) * 100, 100)
           const isAchieved = goal.achieved || progress >= 100
-          const remainingDays = Math.ceil((goal.endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+          const endDate = ensureDate(goal.endDate)
+          const remainingDays = Math.ceil((endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
 
           return (
             <motion.div
