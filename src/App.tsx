@@ -19,6 +19,7 @@ import { ComparisonPanel } from '@/components/ComparisonPanel'
 import { ElectricityPricingPanel } from '@/components/ElectricityPricingPanel'
 import { MaintenanceAlertsPanel } from '@/components/MaintenanceAlertsPanel'
 import { AchievementsPanel } from '@/components/AchievementsPanel'
+import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { 
   MOCK_DEVICES, 
   MOCK_SCENES, 
@@ -41,12 +42,17 @@ function App() {
   const [electricityRates] = useKV<ElectricityRate[]>('electricity-rates', MOCK_ELECTRICITY_RATES)
   const [maintenanceAlerts, setMaintenanceAlerts] = useKV<MaintenanceAlert[]>('maintenance-alerts', MOCK_MAINTENANCE_ALERTS)
   const [achievements] = useKV<Achievement[]>('achievements', MOCK_ACHIEVEMENTS)
+  const [hasCompletedWelcome, setHasCompletedWelcome] = useKV<boolean>('has-completed-welcome', false)
   const [activeTab, setActiveTab] = useState('summary')
   const [showNotifications, setShowNotifications] = useState(false)
   const [showChat, setShowChat] = useState(false)
   const [showVoiceControl, setShowVoiceControl] = useState(false)
 
   const unreadCount = (notifications || []).filter(n => !n.read).length
+
+  const handleWelcomeComplete = () => {
+    setHasCompletedWelcome(true)
+  }
 
   const handleDeviceToggle = (deviceId: string) => {
     setDevices((currentDevices) => {
@@ -200,8 +206,13 @@ function App() {
   }, [devices, setGoals])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(114,200,200,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,150,255,0.08),transparent_50%)] pointer-events-none" />
+    <>
+      {!hasCompletedWelcome && (
+        <WelcomeScreen onComplete={handleWelcomeComplete} />
+      )}
+      
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(114,200,200,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,150,255,0.08),transparent_50%)] pointer-events-none" />
       
       <div className="relative">
         <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50">
@@ -373,8 +384,9 @@ function App() {
             <Lightning className="w-6 h-6" weight="fill" />
           </button>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
