@@ -20,6 +20,8 @@ import { ElectricityPricingPanel } from '@/components/ElectricityPricingPanel'
 import { MaintenanceAlertsPanel } from '@/components/MaintenanceAlertsPanel'
 import { AchievementsPanel } from '@/components/AchievementsPanel'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
+import { TuyaIntegration } from '@/components/TuyaIntegration'
+import { AdaptiveScheduling } from '@/components/AdaptiveScheduling'
 import { 
   MOCK_DEVICES, 
   MOCK_SCENES, 
@@ -30,8 +32,11 @@ import {
   MOCK_MAINTENANCE_ALERTS,
   MOCK_ACHIEVEMENTS
 } from '@/lib/mockData'
-import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule, ElectricityRate, MaintenanceAlert, Achievement } from '@/types'
+import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule, ElectricityRate, MaintenanceAlert, Achievement, TuyaCredentials, TuyaDevice, AdaptiveSchedule, AIScheduleRecommendation } from '@/types'
+import { mockTuyaDeviceDiscovery } from '@/lib/tuyaApi'
+import { generateAIScheduleRecommendations, convertRecommendationToSchedule } from '@/lib/aiScheduling'
 import { Lightning, BellRinging } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 function App() {
   const [devices, setDevices] = useKV<Device[]>('energy-devices', MOCK_DEVICES)
@@ -43,6 +48,9 @@ function App() {
   const [maintenanceAlerts, setMaintenanceAlerts] = useKV<MaintenanceAlert[]>('maintenance-alerts', MOCK_MAINTENANCE_ALERTS)
   const [achievements] = useKV<Achievement[]>('achievements', MOCK_ACHIEVEMENTS)
   const [hasCompletedWelcome, setHasCompletedWelcome] = useKV<boolean>('has-completed-welcome', false)
+  const [tuyaCredentials, setTuyaCredentials] = useKV<TuyaCredentials | null>('tuya-credentials', null)
+  const [adaptiveSchedules, setAdaptiveSchedules] = useKV<AdaptiveSchedule[]>('adaptive-schedules', [])
+  const [aiRecommendations, setAiRecommendations] = useKV<AIScheduleRecommendation[]>('ai-recommendations', [])
   const [activeTab, setActiveTab] = useState('summary')
   const [showNotifications, setShowNotifications] = useState(false)
   const [showChat, setShowChat] = useState(false)
@@ -155,6 +163,80 @@ function App() {
     return (devices || MOCK_DEVICES).reduce((sum, device) => sum + (device.isOn ? device.power : 0), 0)
   }
 
+  const handleTuyaCredentialsSave = (credentials: TuyaCredentials) => {
+    setTuyaCredentials(credentials)
+    toast.success('Tuya credentials saved successfully')
+  }
+
+  const handleTuyaDiscoverDevices = async (): Promise<TuyaDevice[]> => {
+    if (!tuyaCredentials) {
+      throw new Error('No Tuya credentials configured')
+    }
+    
+    const discoveredDevices = await mockTuyaDeviceDiscovery(tuyaCredentials)
+    return discoveredDevices
+  }
+
+  const handleTuyaAddDevice = (device: TuyaDevice) => {
+    setDevices((currentDevices) => [...(currentDevices || []), device])
+  }
+
+  const handleTuyaRemoveDevice = (deviceId: string) => {
+    setDevices((currentDevices) => (currentDevices || []).filter(d => d.id !== deviceId))
+  }
+
+  const handleGenerateAIRecommendations = async () => {
+    const recommendations = await generateAIScheduleRecommendations(devices || MOCK_DEVICES)
+    setAiRecommendations(recommendations)
+  }
+
+  const handleAcceptRecommendation = (recommendation: AIScheduleRecommendation) => {
+    const newSchedule = convertRecommendationToSchedule(recommendation)
+    setAdaptiveSchedules((currentSchedules) => [...(currentSchedules || []), newSchedule])
+    setAiRecommendations((currentRecs) => 
+      (currentRecs || []).filter(r => r.id !== recommendation.id)
+    )
+  }
+
+  const handleDismissRecommendation = (recommendationId: string) => {
+    setAiRecommendations((currentRecs) => 
+      (currentRecs || []).filter(r => r.id !== recommendationId)
+    )
+  }
+
+  const handleEnableAdaptiveSchedule = (scheduleId: string) => {
+    setAdaptiveSchedules((currentSchedules) => {
+      if (!currentSchedules) return []
+      return currentSchedules.map(s =>
+        s.id === scheduleId
+          ? { ...s, enabled: true, lastModified: new Date() }
+          : s
+      )
+    })
+    toast.success('Adaptive schedule enabled')
+  }
+
+  const handleDisableAdaptiveSchedule = (scheduleId: string) => {
+    setAdaptiveSchedules((currentSchedules) => {
+      if (!currentSchedules) return []
+      return currentSchedules.map(s =>
+        s.id === scheduleId
+          ? { ...s, enabled: false, lastModified: new Date() }
+          : s
+      )
+    })
+    toast.info('Adaptive schedule paused')
+  }
+
+  const handleDeleteAdaptiveSchedule = (scheduleId: string) => {
+    setAdaptiveSchedules((currentSchedules) => 
+      (currentSchedules || []).filter(s => s.id !== scheduleId)
+    )
+    toast.success('Adaptive schedule deleted')
+  }
+
+  const tuyaDevices = (devices || []).filter((d): d is TuyaDevice => 'tuyaId' in d)
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -250,7 +332,7 @@ function App() {
 
         <main className="container mx-auto px-6 py-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-3 lg:grid-cols-13 w-full max-w-full">
+            <TabsList className="grid grid-cols-3 lg:grid-cols-15 w-full max-w-full">
               <TabsTrigger value="summary">Summary</TabsTrigger>
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="devices">Devices</TabsTrigger>
@@ -259,6 +341,8 @@ function App() {
               <TabsTrigger value="scenes">Scenes</TabsTrigger>
               <TabsTrigger value="goals">Goals</TabsTrigger>
               <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
+              <TabsTrigger value="adaptive">AI Scheduling</TabsTrigger>
+              <TabsTrigger value="tuya">Tuya Devices</TabsTrigger>
               <TabsTrigger value="costs">Costs</TabsTrigger>
               <TabsTrigger value="pricing">Pricing</TabsTrigger>
               <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
@@ -315,6 +399,31 @@ function App() {
                 onAddSchedule={handleAddSchedule}
                 onToggleSchedule={handleToggleSchedule}
                 onDeleteSchedule={handleDeleteSchedule}
+              />
+            </TabsContent>
+
+            <TabsContent value="adaptive" className="space-y-6">
+              <AdaptiveScheduling
+                devices={devices || MOCK_DEVICES}
+                schedules={adaptiveSchedules || []}
+                recommendations={aiRecommendations || []}
+                onEnableSchedule={handleEnableAdaptiveSchedule}
+                onDisableSchedule={handleDisableAdaptiveSchedule}
+                onDeleteSchedule={handleDeleteAdaptiveSchedule}
+                onAcceptRecommendation={handleAcceptRecommendation}
+                onDismissRecommendation={handleDismissRecommendation}
+                onGenerateRecommendations={handleGenerateAIRecommendations}
+              />
+            </TabsContent>
+
+            <TabsContent value="tuya" className="space-y-6">
+              <TuyaIntegration
+                credentials={tuyaCredentials || null}
+                onCredentialsSave={handleTuyaCredentialsSave}
+                onDiscoverDevices={handleTuyaDiscoverDevices}
+                onAddDevice={handleTuyaAddDevice}
+                onRemoveDevice={handleTuyaRemoveDevice}
+                connectedDevices={tuyaDevices}
               />
             </TabsContent>
 

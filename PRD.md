@@ -117,6 +117,20 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Progression**: Milestone reached → Achievement unlocked → Notification shown → User views in gallery → Optionally shares → Visual card generated → Copy or download
 - **Success criteria**: Achievements unlock reliably, visual cards attractive and shareable, social features work smoothly, tiers (bronze/silver/gold/platinum) feel meaningful
 
+### Tuya Device Integration
+- **Functionality**: Connect and manage Tuya IoT devices through cloud API integration with support for smart plugs, sensors, lights, and appliances that provide real-time energy monitoring
+- **Purpose**: Enables users to integrate their existing Tuya smart home devices for comprehensive device-level energy tracking
+- **Trigger**: User navigates to Tuya Devices tab and configures API credentials
+- **Progression**: Enter Tuya credentials → Save configuration → Discover available devices → Select devices to add → Monitor energy consumption → Control devices remotely
+- **Success criteria**: Credentials save securely, device discovery works reliably, energy data syncs in real-time, device controls are responsive, supports 1000+ Tuya device types
+
+### AI Adaptive Scheduling
+- **Functionality**: Machine learning-powered schedule generation that analyzes usage patterns, peak pricing, occupancy, and weather to automatically create optimal device schedules with four modes: peak avoidance, occupancy-based, weather-based, and cost optimization
+- **Purpose**: Maximizes energy savings by intelligently timing device operation based on multiple factors without requiring manual configuration
+- **Trigger**: User clicks "Generate AI Recommendations" or system automatically suggests schedules based on device behavior
+- **Progression**: AI analyzes patterns → Generates recommendations with savings estimates → User reviews confidence scores → Accepts or dismisses recommendations → Schedule activates automatically → System learns and adapts over time
+- **Success criteria**: Recommendations are accurate and actionable, estimated savings realistic, schedules execute reliably, confidence scores help decision-making, adaptive learning improves over time
+
 ### Smart Scenes & Automation
 - **Functionality**: Create and manage energy-saving scenes (e.g., "Away Mode", "Sleep Mode"), set schedules, AI-adaptive routines
 - **Purpose**: Automates energy optimization based on behavior patterns and preferences
@@ -156,6 +170,14 @@ This requires multiple interconnected features including real-time monitoring, d
 - **False Positive Alerts**: Allow user dismissal, track feedback to improve prediction accuracy
 - **Achievement Already Unlocked**: Prevent duplicates, show unlock date for existing achievements
 - **Share Feature Unavailable**: Gracefully handle when clipboard or download fails, show alternative text-only share option
+- **Tuya API Connection Failed**: Show clear error messages with troubleshooting steps, validate credentials format before saving
+- **Tuya Device Discovery Returns Empty**: Provide help text about device pairing, link to Tuya Smart app instructions
+- **Tuya Device Offline**: Display offline badge, queue commands until reconnection, notify when back online
+- **Invalid Tuya Credentials**: Detect authentication failures, guide user to correct credential retrieval process
+- **No AI Recommendations Generated**: Explain need for more usage history data, suggest minimum data collection period
+- **AI Recommendation Conflicts**: Detect conflicting schedules across recommendations, prioritize by savings potential
+- **Low Confidence AI Recommendations**: Filter out recommendations below confidence threshold, explain reasoning
+- **Adaptive Schedule Execution Failure**: Log failures, alert user, provide manual override, learn from failures
 
 ## Design Direction
 The design should evoke a sense of technological sophistication and environmental consciousness - feeling like a premium, cutting-edge energy management command center. It should balance data density with clarity, using intelligent visualization to make complex information digestible. The aesthetic should feel clean, modern, and subtly futuristic, with energy and efficiency themes woven throughout.
@@ -243,7 +265,12 @@ Animations should feel responsive and purposeful, reinforcing the sense of a rea
   - Download (export/download),
   - FileText (reports),
   - Receipt (billing),
-  - CheckCircle (completion)
+  - CheckCircle (completion),
+  - Brain (AI/machine learning),
+  - CloudSun (weather),
+  - Users (occupancy),
+  - Link (connection/integration),
+  - PlugsConnected (Tuya devices)
 - **Spacing**: 
   - Container padding: `p-6` (24px)
   - Card internal padding: `p-4` (16px)

@@ -182,3 +182,84 @@ export interface ShareableCard {
   color: string
   timestamp: Date
 }
+
+export interface TuyaCredentials {
+  accessId: string
+  accessKey: string
+  deviceId?: string
+  uid?: string
+  apiEndpoint?: string
+}
+
+export interface TuyaDevice extends Device {
+  tuyaId: string
+  productId?: string
+  category?: string
+  online: boolean
+  functions?: TuyaDeviceFunction[]
+  statusSet?: TuyaDeviceStatus[]
+}
+
+export interface TuyaDeviceFunction {
+  code: string
+  type: string
+  values: string
+}
+
+export interface TuyaDeviceStatus {
+  code: string
+  value: any
+}
+
+export interface AdaptiveSchedule {
+  id: string
+  name: string
+  enabled: boolean
+  deviceId: string
+  type: 'peak-avoidance' | 'occupancy-based' | 'weather-based' | 'cost-optimization'
+  aiPredicted: boolean
+  confidence: number
+  schedule: {
+    monday?: TimeSlot[]
+    tuesday?: TimeSlot[]
+    wednesday?: TimeSlot[]
+    thursday?: TimeSlot[]
+    friday?: TimeSlot[]
+    saturday?: TimeSlot[]
+    sunday?: TimeSlot[]
+  }
+  conditions?: {
+    weather?: string[]
+    occupancy?: boolean
+    peakHours?: boolean
+    temperature?: { min: number; max: number }
+  }
+  createdBy: 'user' | 'ai'
+  createdAt: Date
+  lastModified: Date
+  estimatedSavings?: number
+}
+
+export interface TimeSlot {
+  startTime: string
+  endTime: string
+  action: 'on' | 'off' | 'adjust'
+  settings?: {
+    temperature?: number
+    brightness?: number
+    power?: number
+  }
+}
+
+export interface AIScheduleRecommendation {
+  id: string
+  deviceId: string
+  deviceName: string
+  type: 'peak-avoidance' | 'occupancy-based' | 'weather-based' | 'cost-optimization'
+  reason: string
+  estimatedSavings: number
+  confidence: number
+  schedule: AdaptiveSchedule['schedule']
+  conditions?: AdaptiveSchedule['conditions']
+  createdAt: Date
+}
