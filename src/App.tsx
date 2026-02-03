@@ -22,6 +22,8 @@ import { AchievementsPanel } from '@/components/AchievementsPanel'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { TuyaIntegration } from '@/components/TuyaIntegration'
 import { AdaptiveScheduling } from '@/components/AdaptiveScheduling'
+import { TabSearch } from '@/components/TabSearch'
+import { TabFilter } from '@/components/TabFilter'
 import { 
   MOCK_DEVICES, 
   MOCK_SCENES, 
@@ -350,7 +352,20 @@ function App() {
         <main className="container mx-auto px-6 py-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-2">
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="hidden md:block">
+                    <TabSearch currentTab={activeTab} onTabChange={setActiveTab} />
+                  </div>
+                  <div className="md:hidden w-full">
+                    <TabFilter currentTab={activeTab} onTabChange={setActiveTab} />
+                  </div>
+                  <div className="text-xs text-muted-foreground hidden lg:block">
+                    Press <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border">⌘K</kbd> to search
+                  </div>
+                </div>
+              </div>
+              <div className="hidden md:flex flex-wrap gap-2">
                 <button
                   onClick={() => setActiveTab('summary')}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
