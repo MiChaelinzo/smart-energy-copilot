@@ -309,7 +309,10 @@ function App() {
   return (
     <>
       {!hasCompletedWelcome && (
-        <WelcomeScreen onComplete={handleWelcomeComplete} />
+        <WelcomeScreen 
+          onComplete={handleWelcomeComplete}
+          onCredentialsSave={handleTuyaCredentialsSave}
+        />
       )}
       
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary">
