@@ -17,7 +17,8 @@ import {
   CurrencyDollar,
   Wrench,
   Trophy,
-  FileText
+  FileText,
+  Gear
 } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '@/components/ui/card'
@@ -140,6 +141,13 @@ const TABS: Tab[] = [
     icon: <FileText className="w-4 h-4" />,
     keywords: ['export', 'pdf', 'documents', 'summary', 'statements'],
     category: 'Insights'
+  },
+  { 
+    id: 'settings', 
+    label: 'Settings', 
+    icon: <Gear className="w-4 h-4" />,
+    keywords: ['preferences', 'configuration', 'options', 'setup', 'customize', 'tour', 'welcome', 'onboarding'],
+    category: 'System'
   }
 ]
 

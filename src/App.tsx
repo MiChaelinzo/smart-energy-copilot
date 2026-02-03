@@ -24,6 +24,7 @@ import { TuyaIntegration } from '@/components/TuyaIntegration'
 import { AdaptiveScheduling } from '@/components/AdaptiveScheduling'
 import { TabSearch } from '@/components/TabSearch'
 import { TabFilter } from '@/components/TabFilter'
+import { SettingsPanel } from '@/components/SettingsPanel'
 import { 
   MOCK_DEVICES, 
   MOCK_SCENES, 
@@ -53,7 +54,8 @@ import {
   Trophy,
   FileText,
   ArrowsClockwise,
-  Stack
+  Stack,
+  Gear
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -79,6 +81,10 @@ function App() {
 
   const handleWelcomeComplete = () => {
     setHasCompletedWelcome(true)
+  }
+
+  const handleReplayWelcomeTour = () => {
+    setHasCompletedWelcome(false)
   }
 
   const handleDeviceToggle = (deviceId: string) => {
@@ -527,6 +533,17 @@ function App() {
                   <FileText className="w-4 h-4" />
                   Reports
                 </button>
+                <button
+                  onClick={() => setActiveTab('settings')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'settings'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Gear className="w-4 h-4" />
+                  Settings
+                </button>
               </div>
             </div>
 
@@ -635,6 +652,10 @@ function App() {
                 devices={devices || MOCK_DEVICES}
                 goals={goals || MOCK_GOALS}
               />
+            </TabsContent>
+
+            <TabsContent value="settings" className="space-y-6">
+              <SettingsPanel onReplayWelcomeTour={handleReplayWelcomeTour} />
             </TabsContent>
           </Tabs>
         </main>

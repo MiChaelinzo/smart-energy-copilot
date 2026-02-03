@@ -23,7 +23,8 @@ import {
   CurrencyDollar,
   Wrench,
   Trophy,
-  FileText
+  FileText,
+  Gear
 } from '@phosphor-icons/react'
 
 interface TabFilterProps {
@@ -54,6 +55,7 @@ const TAB_CONFIGS: TabConfig[] = [
   { id: 'adaptive', label: 'AI Scheduling', icon: <Brain className="w-4 h-4" />, category: 'Planning' },
   { id: 'maintenance', label: 'Maintenance', icon: <Wrench className="w-4 h-4" />, category: 'System' },
   { id: 'achievements', label: 'Achievements', icon: <Trophy className="w-4 h-4" />, category: 'System' },
+  { id: 'settings', label: 'Settings', icon: <Gear className="w-4 h-4" />, category: 'System' },
 ]
 
 export function TabFilter({ currentTab, onTabChange }: TabFilterProps) {
