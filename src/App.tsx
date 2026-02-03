@@ -76,8 +76,16 @@ function App() {
   const [showNotifications, setShowNotifications] = useState(false)
   const [showChat, setShowChat] = useState(false)
   const [showVoiceControl, setShowVoiceControl] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const unreadCount = (notifications || []).filter(n => !n.read).length
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleWelcomeComplete = () => {
     setHasCompletedWelcome(true)
@@ -311,6 +319,17 @@ function App() {
       })
     })
   }, [devices, setGoals])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Lightning className="w-16 h-16 text-primary animate-pulse" weight="fill" />
+          <p className="text-muted-foreground">Loading Smart Energy Copilot...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
