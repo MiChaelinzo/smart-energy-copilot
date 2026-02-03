@@ -13,6 +13,8 @@ interface WelcomeScreenProps {
   onCredentialsSave?: (credentials: TuyaCredentials) => void
 }
 
+const ANIMATION_DURATION = 0.3
+
 const ONBOARDING_STEPS = [
   {
     icon: Lightning,
@@ -126,6 +128,7 @@ const ENERGY_SAVING_TIPS = [
 export function WelcomeScreen({ onComplete, onCredentialsSave }: WelcomeScreenProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [currentTipIndex, setCurrentTipIndex] = useState(0)
+  const [isExiting, setIsExiting] = useState(false)
   const [tuyaCredentials, setTuyaCredentials] = useState<TuyaCredentials>({
     accessId: '',
     accessKey: '',
@@ -146,6 +149,13 @@ export function WelcomeScreen({ onComplete, onCredentialsSave }: WelcomeScreenPr
     return () => clearInterval(interval)
   }, [])
 
+  const handleComplete = () => {
+    setIsExiting(true)
+    setTimeout(() => {
+      onComplete()
+    }, ANIMATION_DURATION * 1000)
+  }
+
   const handleNext = () => {
     if (currentStep < ONBOARDING_STEPS.length - 1) {
       setCurrentStep(currentStep + 1)
@@ -154,17 +164,17 @@ export function WelcomeScreen({ onComplete, onCredentialsSave }: WelcomeScreenPr
         onCredentialsSave?.(tuyaCredentials)
         toast.success('Tuya credentials saved! You can start discovering devices.')
       }
-      onComplete()
+      handleComplete()
     }
   }
 
   const handleSkip = () => {
-    onComplete()
+    handleComplete()
   }
 
   const handleSkipSetup = () => {
     toast.info('You can add Tuya devices later from the Tuya Devices tab')
-    onComplete()
+    handleComplete()
   }
 
   const handlePrevious = () => {
@@ -174,7 +184,12 @@ export function WelcomeScreen({ onComplete, onCredentialsSave }: WelcomeScreenPr
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm">
+    <motion.div 
+      className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isExiting ? 0 : 1 }}
+      transition={{ duration: ANIMATION_DURATION }}
+    >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(114,200,200,0.15),transparent_60%),radial-gradient(circle_at_80%_20%,rgba(100,150,255,0.12),transparent_50%)] pointer-events-none" />
       
       <motion.div 
@@ -188,8 +203,11 @@ export function WelcomeScreen({ onComplete, onCredentialsSave }: WelcomeScreenPr
       <div className="relative h-full flex flex-col items-center justify-center p-4 overflow-y-auto gap-4">
         <motion.div
           initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          animate={{ 
+            opacity: isExiting ? 0 : 1, 
+            y: isExiting ? -30 : 0 
+          }}
+          transition={{ duration: isExiting ? ANIMATION_DURATION : 0.6, delay: isExiting ? 0 : 0.2 }}
           className="w-full max-w-3xl"
         >
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-card/80 to-secondary/60 backdrop-blur-lg border border-border/50 shadow-lg">
@@ -246,8 +264,11 @@ export function WelcomeScreen({ onComplete, onCredentialsSave }: WelcomeScreenPr
 
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          animate={{ 
+            opacity: isExiting ? 0 : 1, 
+            scale: isExiting ? 0.95 : 1 
+          }}
+          transition={{ duration: isExiting ? ANIMATION_DURATION : 0.5, delay: isExiting ? 0 : 0.3 }}
           className="w-full max-w-3xl"
         >
           <Card className="border-2 shadow-2xl overflow-hidden relative">
@@ -539,6 +560,6 @@ export function WelcomeScreen({ onComplete, onCredentialsSave }: WelcomeScreenPr
           </Card>
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }

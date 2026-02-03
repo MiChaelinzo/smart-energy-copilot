@@ -77,21 +77,29 @@ function App() {
   const [showChat, setShowChat] = useState(false)
   const [showVoiceControl, setShowVoiceControl] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [showWelcome, setShowWelcome] = useState(false)
 
   const unreadCount = (notifications || []).filter(n => !n.read).length
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false)
+      if (hasCompletedWelcome === false) {
+        setShowWelcome(true)
+      }
     }, 100)
     return () => clearTimeout(timer)
-  }, [])
+  }, [hasCompletedWelcome])
 
   const handleWelcomeComplete = () => {
-    setHasCompletedWelcome(true)
+    setShowWelcome(false)
+    setTimeout(() => {
+      setHasCompletedWelcome(true)
+    }, 300)
   }
 
   const handleReplayWelcomeTour = () => {
+    setShowWelcome(true)
     setHasCompletedWelcome(false)
   }
 
@@ -716,7 +724,7 @@ function App() {
         </div>
       </div>
 
-      {!hasCompletedWelcome && (
+      {showWelcome && (
         <WelcomeScreen 
           onComplete={handleWelcomeComplete}
           onCredentialsSave={handleTuyaCredentialsSave}
