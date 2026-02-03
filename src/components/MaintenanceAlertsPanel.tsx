@@ -13,6 +13,7 @@ import {
   Info
 } from '@phosphor-icons/react'
 import { formatDistanceToNow } from 'date-fns'
+import { ensureDate } from '@/lib/utils'
 
 interface MaintenanceAlertsPanelProps {
   alerts: MaintenanceAlert[]
@@ -168,7 +169,7 @@ export function MaintenanceAlertsPanel({
                         {alert.type.replace('-', ' ')}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(alert.createdAt, { addSuffix: true })}
+                        {formatDistanceToNow(ensureDate(alert.createdAt), { addSuffix: true })}
                       </span>
                     </div>
                     <CardTitle className={`${getSeverityColor(alert.severity)}`}>
@@ -230,7 +231,7 @@ export function MaintenanceAlertsPanel({
                   {alert.estimatedDate && (
                     <p className="text-xs text-muted-foreground flex items-center gap-1 mt-2">
                       <Calendar className="w-3 h-3" />
-                      Action recommended by: {alert.estimatedDate.toLocaleDateString()}
+                      Action recommended by: {ensureDate(alert.estimatedDate).toLocaleDateString()}
                     </p>
                   )}
                 </div>
