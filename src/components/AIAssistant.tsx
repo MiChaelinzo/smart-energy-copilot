@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Device, ChatMessage } from '@/types'
-import { Robot, PaperPlaneRight, X, Lightning, Lightbulb, CurrencyDollar, TrendUp, ClockCountdown, Sparkle, ChartLine } from '@phosphor-icons/react'
+import { Robot, PaperPlaneRight, X, Lightning, Lightbulb, CurrencyDollar, TrendUp, ClockCountdown, Sparkle, ChartLine, CaretUp, CaretDown } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const RECOMMENDED_PROMPTS = [
@@ -69,8 +69,10 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
   ])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const [showScrollBottom, setShowScrollBottom] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const scrollAreaViewportRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const scrollToBottom = () => {
@@ -79,11 +81,48 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
     }
   }
 
+  const scrollToTop = () => {
+    const viewport = messagesContainerRef.current?.querySelector('[data-slot="scroll-area-viewport"]')
+    if (viewport) {
+      viewport.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
+  const handleScroll = (event: Event) => {
+    const target = event.target as HTMLDivElement
+    if (!target) return
+
+    const scrollTop = target.scrollTop
+    const scrollHeight = target.scrollHeight
+    const clientHeight = target.clientHeight
+
+    setShowScrollTop(scrollTop > 100)
+    setShowScrollBottom(scrollTop < scrollHeight - clientHeight - 100)
+  }
+
   useEffect(() => {
     if (isOpen) {
       setTimeout(scrollToBottom, 100)
     }
   }, [messages, isTyping, isOpen])
+
+  useEffect(() => {
+    const container = messagesContainerRef.current
+    const viewport = container?.querySelector('[data-slot="scroll-area-viewport"]')
+    
+    if (viewport) {
+      viewport.addEventListener('scroll', handleScroll)
+      
+      const timeoutId = setTimeout(() => {
+        handleScroll({ target: viewport } as any)
+      }, 200)
+      
+      return () => {
+        viewport.removeEventListener('scroll', handleScroll)
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [isOpen, messages])
 
   const handleSend = async () => {
     if (!input.trim() || isTyping) return
@@ -195,7 +234,31 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                 </Button>
               </div>
 
-              <div className="flex-1 overflow-hidden min-h-0">
+              <div className="flex-1 overflow-hidden min-h-0 relative" ref={messagesContainerRef}>
+                <AnimatePresence>
+                  {showScrollTop && (
+                    <motion.button
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      onClick={scrollToTop}
+                      className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-accent/90 hover:bg-accent text-accent-foreground rounded-full p-2 shadow-lg backdrop-blur-sm border border-border/50 transition-all hover:scale-110"
+                    >
+                      <CaretUp className="w-4 h-4" weight="bold" />
+                    </motion.button>
+                  )}
+                  {showScrollBottom && (
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      onClick={scrollToBottom}
+                      className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 bg-accent/90 hover:bg-accent text-accent-foreground rounded-full p-2 shadow-lg backdrop-blur-sm border border-border/50 transition-all hover:scale-110"
+                    >
+                      <CaretDown className="w-4 h-4" weight="bold" />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
                 <ScrollArea className="h-full">
                   <div className="p-4 space-y-4 pb-6">
                     {messages.map((message) => (
