@@ -35,7 +35,24 @@ import {
 import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule, ElectricityRate, MaintenanceAlert, Achievement, TuyaCredentials, TuyaDevice, AdaptiveSchedule, AIScheduleRecommendation } from '@/types'
 import { mockTuyaDeviceDiscovery } from '@/lib/tuyaApi'
 import { generateAIScheduleRecommendations, convertRecommendationToSchedule } from '@/lib/aiScheduling'
-import { Lightning, BellRinging } from '@phosphor-icons/react'
+import { 
+  Lightning, 
+  BellRinging, 
+  ChartBar, 
+  Devices as DevicesIcon,
+  Lightbulb,
+  Target,
+  Calendar,
+  Brain,
+  Plug,
+  CurrencyDollar,
+  ChartLine,
+  Wrench,
+  Trophy,
+  FileText,
+  ArrowsClockwise,
+  Stack
+} from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 function App() {
@@ -332,23 +349,175 @@ function App() {
 
         <main className="container mx-auto px-6 py-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-3 lg:grid-cols-15 w-full max-w-full">
-              <TabsTrigger value="summary">Summary</TabsTrigger>
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-              <TabsTrigger value="devices">Devices</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="comparison">Compare</TabsTrigger>
-              <TabsTrigger value="scenes">Scenes</TabsTrigger>
-              <TabsTrigger value="goals">Goals</TabsTrigger>
-              <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
-              <TabsTrigger value="adaptive">AI Scheduling</TabsTrigger>
-              <TabsTrigger value="tuya">Tuya Devices</TabsTrigger>
-              <TabsTrigger value="costs">Costs</TabsTrigger>
-              <TabsTrigger value="pricing">Pricing</TabsTrigger>
-              <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
-              <TabsTrigger value="achievements">Achievements</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
-            </TabsList>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setActiveTab('summary')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'summary'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Stack className="w-4 h-4" />
+                  Summary
+                </button>
+                <button
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'dashboard'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <ChartBar className="w-4 h-4" />
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => setActiveTab('devices')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'devices'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <DevicesIcon className="w-4 h-4" />
+                  Devices
+                </button>
+                <button
+                  onClick={() => setActiveTab('analytics')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'analytics'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <ChartLine className="w-4 h-4" />
+                  Analytics
+                </button>
+                <button
+                  onClick={() => setActiveTab('comparison')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'comparison'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <ArrowsClockwise className="w-4 h-4" />
+                  Compare
+                </button>
+                <button
+                  onClick={() => setActiveTab('scenes')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'scenes'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Lightbulb className="w-4 h-4" />
+                  Scenes
+                </button>
+                <button
+                  onClick={() => setActiveTab('goals')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'goals'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Target className="w-4 h-4" />
+                  Goals
+                </button>
+                <button
+                  onClick={() => setActiveTab('scheduler')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'scheduler'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Calendar className="w-4 h-4" />
+                  Scheduler
+                </button>
+                <button
+                  onClick={() => setActiveTab('adaptive')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'adaptive'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Brain className="w-4 h-4" />
+                  AI Scheduling
+                </button>
+                <button
+                  onClick={() => setActiveTab('tuya')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'tuya'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Plug className="w-4 h-4" />
+                  Tuya Devices
+                </button>
+                <button
+                  onClick={() => setActiveTab('costs')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'costs'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <CurrencyDollar className="w-4 h-4" />
+                  Costs
+                </button>
+                <button
+                  onClick={() => setActiveTab('pricing')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'pricing'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <CurrencyDollar className="w-4 h-4" weight="fill" />
+                  Pricing
+                </button>
+                <button
+                  onClick={() => setActiveTab('maintenance')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'maintenance'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Wrench className="w-4 h-4" />
+                  Maintenance
+                </button>
+                <button
+                  onClick={() => setActiveTab('achievements')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'achievements'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Trophy className="w-4 h-4" />
+                  Achievements
+                </button>
+                <button
+                  onClick={() => setActiveTab('reports')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                    activeTab === 'reports'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <FileText className="w-4 h-4" />
+                  Reports
+                </button>
+              </div>
+            </div>
 
             <TabsContent value="summary" className="space-y-6">
               <TotalSummaryPanel 
