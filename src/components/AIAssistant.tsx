@@ -71,6 +71,7 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -114,8 +115,29 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
     }
   }
 
-  const handlePromptClick = (prompt: string) => {
-    setInput(prompt)
+  const handlePromptClick = async (prompt: string) => {
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: prompt,
+      timestamp: new Date()
+    }
+
+    setMessages(prev => [...prev, userMessage])
+    setInput('')
+    setIsTyping(true)
+
+    setTimeout(() => {
+      const aiResponse = generateAIResponse(prompt, devices)
+      const assistantMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: aiResponse,
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, assistantMessage])
+      setIsTyping(false)
+    }, 1000 + Math.random() * 1000)
   }
 
   const showRecommendedPrompts = messages.length <= 1
@@ -157,8 +179,8 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                 </Button>
               </div>
 
-              <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-                <div className="space-y-4 min-h-0">
+              <ScrollArea className="flex-1 p-4">
+                <div className="space-y-4 pb-4">
                   {messages.map((message) => (
                     <motion.div
                       key={message.id}
@@ -243,12 +265,14 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
               <div className="p-4 border-t border-border/50 bg-secondary/20">
                 <div className="flex gap-2">
                   <Textarea
+                    ref={textareaRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyPress}
                     placeholder="Ask about energy usage, control devices..."
-                    className="resize-none bg-background/50"
+                    className="resize-none bg-background/50 min-h-[60px]"
                     rows={2}
+                    disabled={isTyping}
                   />
                   <Button
                     onClick={handleSend}
