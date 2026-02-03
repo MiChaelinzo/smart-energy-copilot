@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -69,6 +69,16 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
   ])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, isTyping])
 
   const handleSend = async () => {
     if (!input.trim()) return
@@ -147,8 +157,8 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                 </Button>
               </div>
 
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-4">
+              <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+                <div className="space-y-4 min-h-0">
                   {messages.map((message) => (
                     <motion.div
                       key={message.id}
@@ -226,6 +236,7 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                       </div>
                     </motion.div>
                   )}
+                  <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
 
