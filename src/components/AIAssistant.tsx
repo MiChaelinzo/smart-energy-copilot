@@ -4,8 +4,53 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Device, ChatMessage } from '@/types'
-import { Robot, PaperPlaneRight, X, Lightning } from '@phosphor-icons/react'
+import { Robot, PaperPlaneRight, X, Lightning, Lightbulb, CurrencyDollar, TrendUp, ClockCountdown, Sparkle, ChartLine } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
+
+const RECOMMENDED_PROMPTS = [
+  {
+    icon: Lightning,
+    label: "Current energy usage",
+    prompt: "What's my current energy usage and which devices are consuming the most power?",
+    color: "text-accent"
+  },
+  {
+    icon: Lightbulb,
+    label: "Energy saving tips",
+    prompt: "How can I save energy and reduce my electricity bill?",
+    color: "text-warning"
+  },
+  {
+    icon: CurrencyDollar,
+    label: "Monthly cost estimate",
+    prompt: "What's my estimated monthly electricity cost based on current usage?",
+    color: "text-success"
+  },
+  {
+    icon: TrendUp,
+    label: "Usage patterns",
+    prompt: "Analyze my energy consumption patterns and suggest optimizations",
+    color: "text-primary"
+  },
+  {
+    icon: ClockCountdown,
+    label: "Smart scheduling",
+    prompt: "Help me set up smart schedules to optimize energy usage",
+    color: "text-accent"
+  },
+  {
+    icon: Sparkle,
+    label: "Smart scenes",
+    prompt: "What smart scenes can I create to automate my devices?",
+    color: "text-warning"
+  },
+  {
+    icon: ChartLine,
+    label: "Performance report",
+    prompt: "Give me a detailed energy performance report with recommendations",
+    color: "text-success"
+  }
+]
 
 interface AIAssistantProps {
   isOpen: boolean
@@ -58,6 +103,12 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
       handleSend()
     }
   }
+
+  const handlePromptClick = (prompt: string) => {
+    setInput(prompt)
+  }
+
+  const showRecommendedPrompts = messages.length <= 1
 
   return (
     <AnimatePresence>
@@ -134,6 +185,47 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                       </div>
                     </motion.div>
                   )}
+                  
+                  {showRecommendedPrompts && !isTyping && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="mt-6 space-y-3"
+                    >
+                      <div className="text-center mb-4">
+                        <p className="text-sm font-medium text-muted-foreground mb-1">Quick Questions</p>
+                        <p className="text-xs text-muted-foreground">Click any suggestion below to get started</p>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        {RECOMMENDED_PROMPTS.map((item, index) => {
+                          const Icon = item.icon
+                          return (
+                            <motion.button
+                              key={index}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.1 * index }}
+                              onClick={() => handlePromptClick(item.prompt)}
+                              className="flex items-center gap-3 p-3 rounded-lg bg-card/50 hover:bg-accent/20 border border-border/50 hover:border-accent/50 transition-all text-left group hover:scale-[1.02] active:scale-[0.98]"
+                            >
+                              <div className={`p-2 rounded-md bg-secondary/50 group-hover:bg-accent/20 transition-colors ${item.color}`}>
+                                <Icon className="w-4 h-4" weight="duotone" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">
+                                  {item.label}
+                                </p>
+                                <p className="text-xs text-muted-foreground line-clamp-1">
+                                  {item.prompt}
+                                </p>
+                              </div>
+                            </motion.button>
+                          )
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </ScrollArea>
 
@@ -156,25 +248,38 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                     <PaperPlaneRight className="w-5 h-5" weight="fill" />
                   </Button>
                 </div>
-                <div className="flex gap-2 mt-2 flex-wrap">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setInput("What's my current energy usage?")}
-                    className="text-xs"
-                  >
-                    <Lightning className="w-3 h-3 mr-1" />
-                    Usage stats
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setInput("How can I save energy?")}
-                    className="text-xs"
-                  >
-                    💡 Save energy
-                  </Button>
-                </div>
+                
+                {!showRecommendedPrompts && (
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePromptClick("What's my current energy usage?")}
+                      className="text-xs"
+                    >
+                      <Lightning className="w-3 h-3 mr-1" />
+                      Usage stats
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePromptClick("How can I save energy?")}
+                      className="text-xs"
+                    >
+                      <Lightbulb className="w-3 h-3 mr-1" />
+                      Save energy
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePromptClick("What's my estimated monthly cost?")}
+                      className="text-xs"
+                    >
+                      <CurrencyDollar className="w-3 h-3 mr-1" />
+                      Cost estimate
+                    </Button>
+                  </div>
+                )}
               </div>
             </Card>
           </motion.div>
