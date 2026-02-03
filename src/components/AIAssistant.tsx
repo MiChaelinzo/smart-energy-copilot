@@ -70,19 +70,23 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const scrollAreaViewportRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
   }
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages, isTyping])
+    if (isOpen) {
+      setTimeout(scrollToBottom, 100)
+    }
+  }, [messages, isTyping, isOpen])
 
   const handleSend = async () => {
-    if (!input.trim()) return
+    if (!input.trim() || isTyping) return
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -95,6 +99,10 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
     setInput('')
     setIsTyping(true)
 
+    if (textareaRef.current) {
+      textareaRef.current.focus()
+    }
+
     setTimeout(() => {
       const aiResponse = generateAIResponse(input, devices)
       const assistantMessage: ChatMessage = {
@@ -105,6 +113,9 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
       }
       setMessages(prev => [...prev, assistantMessage])
       setIsTyping(false)
+      if (textareaRef.current) {
+        textareaRef.current.focus()
+      }
     }, 1000 + Math.random() * 1000)
   }
 
@@ -116,6 +127,8 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
   }
 
   const handlePromptClick = async (prompt: string) => {
+    if (isTyping) return
+    
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
@@ -137,6 +150,9 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
       }
       setMessages(prev => [...prev, assistantMessage])
       setIsTyping(false)
+      if (textareaRef.current) {
+        textareaRef.current.focus()
+      }
     }, 1000 + Math.random() * 1000)
   }
 
@@ -179,118 +195,124 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                 </Button>
               </div>
 
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-4 pb-4">
-                  {messages.map((message) => (
-                    <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[85%] rounded-lg p-3 ${
-                          message.role === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-secondary/80 text-foreground'
-                        }`}
+              <div className="flex-1 overflow-hidden min-h-0">
+                <ScrollArea className="h-full">
+                  <div className="p-4 space-y-4 pb-6">
+                    {messages.map((message) => (
+                      <motion.div
+                        key={message.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-                        <p className="text-xs opacity-60 mt-1">
-                          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
-                  {isTyping && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex justify-start"
-                    >
-                      <div className="bg-secondary/80 rounded-lg p-3">
-                        <div className="flex gap-1">
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                        <div
+                          className={`max-w-[85%] rounded-lg p-3 shadow-sm ${
+                            message.role === 'user'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-secondary/80 text-foreground'
+                          }`}
+                        >
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                          <p className="text-xs opacity-60 mt-1">
+                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
                         </div>
-                      </div>
-                    </motion.div>
-                  )}
-                  
-                  {showRecommendedPrompts && !isTyping && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                      className="mt-6 space-y-3"
-                    >
-                      <div className="text-center mb-4">
-                        <p className="text-sm font-medium text-muted-foreground mb-1">Quick Questions</p>
-                        <p className="text-xs text-muted-foreground">Click any suggestion below to get started</p>
-                      </div>
-                      <div className="grid grid-cols-1 gap-2">
-                        {RECOMMENDED_PROMPTS.map((item, index) => {
-                          const Icon = item.icon
-                          return (
-                            <motion.button
-                              key={index}
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.1 * index }}
-                              onClick={() => handlePromptClick(item.prompt)}
-                              className="flex items-center gap-3 p-3 rounded-lg bg-card/50 hover:bg-accent/20 border border-border/50 hover:border-accent/50 transition-all text-left group hover:scale-[1.02] active:scale-[0.98]"
-                            >
-                              <div className={`p-2 rounded-md bg-secondary/50 group-hover:bg-accent/20 transition-colors ${item.color}`}>
-                                <Icon className="w-4 h-4" weight="duotone" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">
-                                  {item.label}
-                                </p>
-                                <p className="text-xs text-muted-foreground line-clamp-1">
-                                  {item.prompt}
-                                </p>
-                              </div>
-                            </motion.button>
-                          )
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
+                      </motion.div>
+                    ))}
+                    {isTyping && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex justify-start"
+                      >
+                        <div className="bg-secondary/80 rounded-lg p-3 shadow-sm">
+                          <div className="flex gap-1">
+                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                            <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                    
+                    {showRecommendedPrompts && !isTyping && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="mt-6 space-y-3"
+                      >
+                        <div className="text-center mb-4">
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Quick Questions</p>
+                          <p className="text-xs text-muted-foreground">Click any suggestion below to get started</p>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2">
+                          {RECOMMENDED_PROMPTS.map((item, index) => {
+                            const Icon = item.icon
+                            return (
+                              <motion.button
+                                key={index}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.1 * index }}
+                                onClick={() => handlePromptClick(item.prompt)}
+                                disabled={isTyping}
+                                className="flex items-center gap-3 p-3 rounded-lg bg-card/50 hover:bg-accent/20 border border-border/50 hover:border-accent/50 transition-all text-left group hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                              >
+                                <div className={`p-2 rounded-md bg-secondary/50 group-hover:bg-accent/20 transition-colors ${item.color}`}>
+                                  <Icon className="w-4 h-4" weight="duotone" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-foreground group-hover:text-accent transition-colors">
+                                    {item.label}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground line-clamp-1">
+                                    {item.prompt}
+                                  </p>
+                                </div>
+                              </motion.button>
+                            )
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                    <div ref={messagesEndRef} className="h-1" />
+                  </div>
+                </ScrollArea>
+              </div>
 
-              <div className="p-4 border-t border-border/50 bg-secondary/20">
-                <div className="flex gap-2">
-                  <Textarea
-                    ref={textareaRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    placeholder="Ask about energy usage, control devices..."
-                    className="resize-none bg-background/50 min-h-[60px]"
-                    rows={2}
-                    disabled={isTyping}
-                  />
+              <div className="p-4 border-t border-border/50 bg-secondary/20 flex-shrink-0">
+                <div className="flex gap-2 items-end">
+                  <div className="flex-1">
+                    <Textarea
+                      ref={textareaRef}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyPress}
+                      placeholder="Ask about energy usage, control devices..."
+                      className="resize-none bg-background/50 border-border/70 focus:border-accent min-h-[60px] max-h-[120px]"
+                      rows={2}
+                      disabled={isTyping}
+                    />
+                  </div>
                   <Button
                     onClick={handleSend}
                     disabled={!input.trim() || isTyping}
-                    className="self-end"
-                    size="icon"
+                    className="h-[60px] px-4"
+                    size="default"
                   >
                     <PaperPlaneRight className="w-5 h-5" weight="fill" />
                   </Button>
                 </div>
                 
                 {!showRecommendedPrompts && (
-                  <div className="flex gap-2 mt-2 flex-wrap">
+                  <div className="flex gap-2 mt-3 flex-wrap">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handlePromptClick("What's my current energy usage?")}
                       className="text-xs"
+                      disabled={isTyping}
                     >
                       <Lightning className="w-3 h-3 mr-1" />
                       Usage stats
@@ -300,6 +322,7 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                       size="sm"
                       onClick={() => handlePromptClick("How can I save energy?")}
                       className="text-xs"
+                      disabled={isTyping}
                     >
                       <Lightbulb className="w-3 h-3 mr-1" />
                       Save energy
@@ -309,6 +332,7 @@ export function AIAssistant({ isOpen, onClose, devices }: AIAssistantProps) {
                       size="sm"
                       onClick={() => handlePromptClick("What's my estimated monthly cost?")}
                       className="text-xs"
+                      disabled={isTyping}
                     >
                       <CurrencyDollar className="w-3 h-3 mr-1" />
                       Cost estimate
