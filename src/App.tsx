@@ -25,6 +25,12 @@ import { AdaptiveScheduling } from '@/components/AdaptiveScheduling'
 import { TabSearch } from '@/components/TabSearch'
 import { TabFilter } from '@/components/TabFilter'
 import { SettingsPanel } from '@/components/SettingsPanel'
+import { DynamicBackground } from '@/components/DynamicBackground'
+import { MouseTrail } from '@/components/MouseTrail'
+import { EnergyGridOverlay } from '@/components/EnergyGridOverlay'
+import { EnergyPulse } from '@/components/EnergyPulse'
+import { LightningEffect } from '@/components/LightningEffect'
+import { FloatingEnergyParticles } from '@/components/FloatingEnergyParticles'
 import { 
   MOCK_DEVICES, 
   MOCK_SCENES, 
@@ -341,17 +347,24 @@ function App() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(114,200,200,0.1),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,150,255,0.08),transparent_50%)] pointer-events-none" />
+      <DynamicBackground />
+      <EnergyPulse />
+      <FloatingEnergyParticles />
+      <EnergyGridOverlay />
+      <LightningEffect />
+      <MouseTrail />
       
-      <div className="relative">
-        <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(114,200,200,0.08),transparent_50%),radial-gradient(circle_at_70%_80%,rgba(100,150,255,0.06),transparent_50%)] pointer-events-none" style={{ zIndex: 2 }} />
+      
+      <div className="relative" style={{ zIndex: 3 }}>
+        <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 sticky top-0 z-50 shimmer">
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="relative">
+                <div className="relative float-animation">
                   <Lightning className="w-8 h-8 text-primary" weight="fill" />
-                  <div className="absolute inset-0 bg-primary blur-xl opacity-50" />
+                  <div className="absolute inset-0 bg-primary blur-xl opacity-50 pulse-glow" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight">Smart Energy Copilot</h1>
@@ -362,11 +375,11 @@ function App() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2 rounded-lg hover:bg-accent/10 transition-colors"
+                  className="relative p-2 rounded-lg hover:bg-accent/10 transition-all duration-300 hover:scale-110"
                 >
                   <BellRinging className="w-6 h-6 text-foreground" weight={unreadCount > 0 ? 'fill' : 'regular'} />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium">
+                    <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium pulse-glow">
                       {unreadCount}
                     </span>
                   )}
@@ -397,9 +410,9 @@ function App() {
               <div className="hidden md:flex flex-wrap gap-2">
                 <button
                   onClick={() => setActiveTab('summary')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'summary'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -408,9 +421,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('dashboard')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'dashboard'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -419,9 +432,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('devices')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'devices'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -430,9 +443,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('analytics')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'analytics'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -441,9 +454,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('comparison')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'comparison'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -452,9 +465,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('scenes')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'scenes'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -463,9 +476,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('goals')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'goals'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -474,9 +487,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('scheduler')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'scheduler'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -485,9 +498,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('adaptive')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'adaptive'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -496,9 +509,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('tuya')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'tuya'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -507,9 +520,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('costs')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'costs'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -518,9 +531,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('pricing')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'pricing'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -529,9 +542,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('maintenance')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'maintenance'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -540,9 +553,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('achievements')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'achievements'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -551,9 +564,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('reports')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'reports'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -562,9 +575,9 @@ function App() {
                 </button>
                 <button
                   onClick={() => setActiveTab('settings')}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
                     activeTab === 'settings'
-                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
                       : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
                   }`}
                 >
@@ -716,9 +729,10 @@ function App() {
           />
           <button
             onClick={() => setShowChat(!showChat)}
-            className="bg-accent hover:bg-accent/90 text-accent-foreground p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105"
+            className="bg-accent hover:bg-accent/90 text-accent-foreground p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 relative group"
           >
             <Lightning className="w-6 h-6" weight="fill" />
+            <div className="absolute inset-0 bg-accent rounded-full blur-xl opacity-0 group-hover:opacity-50 transition-opacity pulse-glow" />
           </button>
         </div>
         </div>
