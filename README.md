@@ -2,6 +2,433 @@
 
 A comprehensive web dashboard for monitoring and controlling an AI-powered smart energy management system with Tuya IoT device integration, AI adaptive scheduling, voice control, real-time pricing optimization, predictive maintenance, and shareable achievements.
 
+---
+
+## 👥 Project Team
+
+### Team Name: **Energy Innovation Labs**
+
+**Lead Developer & System Architect**: Michael G. Inso (@MiChaelinzo)  
+**AI/ML Engineer**: Shubham Mishra (@shubh2294)  
+**Full-Stack Developer**: GitHub Copilot (@Copilot)
+
+**Mission**: Democratize energy efficiency through intelligent automation, making sustainable living accessible and affordable for everyone.
+
+**Contact**: [GitHub Repository](https://github.com/MiChaelinzo/Project-Concept-Smart-Energy-Copilot)
+
+---
+
+## 📋 Complete Project Description
+
+### The Problem We're Addressing
+
+Modern households and businesses face three critical energy challenges:
+
+1. **Invisible Energy Waste**: Users have no visibility into which devices consume the most power, leading to 30-40% unnecessary energy waste
+2. **Manual Management Burden**: Constantly adjusting thermostats, lights, and appliances is time-consuming and often forgotten
+3. **High Electricity Costs**: Peak hour pricing and inefficient device usage result in unnecessarily high utility bills
+4. **Reactive Maintenance**: Devices fail unexpectedly, causing costly repairs and energy inefficiency
+
+### Our Solution
+
+Smart Energy Copilot is an AI-powered IoT system that autonomously optimizes energy consumption through:
+
+- **Real-Time Monitoring**: Track device-level power consumption using Tuya smart plugs and sensors
+- **Intelligent Automation**: AI learns user behavior patterns and creates adaptive schedules to minimize waste
+- **Predictive Analytics**: Machine learning forecasts energy usage with 95%+ accuracy and predicts maintenance needs before failures
+- **Voice Control Integration**: Hands-free device management through natural language commands
+- **Cost Optimization**: Automatic scheduling based on time-of-use electricity rates to minimize bills
+- **Gamified Engagement**: Achievement system motivates consistent energy-saving behaviors
+
+### Target Users
+
+**Primary Audience:**
+- **Homeowners** seeking to reduce utility bills (20-40% savings)
+- **Renters** with smart devices wanting energy visibility and control
+- **Small Businesses** managing multiple devices across locations
+- **Tech Enthusiasts** interested in IoT and home automation
+
+**Secondary Audience:**
+- **Property Managers** optimizing energy across rental units
+- **Sustainability Advocates** tracking and reducing carbon footprint
+- **Energy Consultants** providing efficiency services to clients
+
+### Overall Design Philosophy
+
+**Modern, Approachable, and Empowering**
+
+- **Aesthetic**: Cyberpunk-inspired energy theme with electric cyan and deep teal colors, featuring dynamic backgrounds with floating energy particles, grid overlays, and lightning effects
+- **Typography**: Space Grotesk for headings (geometric, technical) paired with Inter for body text (clean, legible)
+- **Interaction**: Purposeful animations that guide attention, smooth micro-interactions, and real-time visual feedback
+- **Information Architecture**: Multi-tab dashboard with quick search/filter, organized by user workflow (Monitor → Analyze → Optimize → Automate)
+- **Accessibility**: WCAG AA compliant, keyboard navigation, screen reader support, voice control alternative
+
+---
+
+## 🏗️ Design Principles
+
+### System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     USER INTERFACE LAYER                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐            │
+│  │ Web Dashboard│  │Voice Control│  │Mobile App   │            │
+│  │  (React)    │  │ (Web Speech)│  │  (Planned)  │            │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘            │
+└─────────┼─────────────────┼─────────────────┼───────────────────┘
+          │                 │                 │
+          ▼                 ▼                 ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                   APPLICATION LOGIC LAYER                        │
+│  ┌──────────────────────────────────────────────────────┐      │
+│  │           Smart Energy Copilot Core Engine            │      │
+│  │  • Device Manager      • AI Scheduler                 │      │
+│  │  • Energy Monitor      • Behavior Learning            │      │
+│  │  • Analytics Engine    • Anomaly Detector             │      │
+│  │  • Cost Calculator     • Maintenance Predictor        │      │
+│  └──────────────────┬──────────────────────────────────┘       │
+└─────────────────────┼──────────────────────────────────────────┘
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+┌──────────────┐ ┌──────────┐ ┌───────────────┐
+│   EDGE TIER  │ │CLOUD TIER│ │  DEVICE TIER  │
+│              │ │          │ │               │
+│ Raspberry Pi │ │Tuya Cloud│ │  IoT Devices  │
+│    Model 4   │ │   API    │ │               │
+│              │ │          │ │ • Smart Plugs │
+│ • T5 AI Core │ │• Auth    │ │ • Sensors     │
+│ • Local AI   │ │• Device  │ │ • HVAC        │
+│ • Camera     │ │  Mgmt    │ │ • Lights      │
+│ • Processing │ │• Analytics│ │ • Appliances  │
+└──────────────┘ └──────────┘ └───────────────┘
+```
+
+### Hardware Connection Diagram
+
+```
+                    ┌─────────────────────────┐
+                    │   Internet / WiFi       │
+                    │   (Home Network)        │
+                    └───────────┬─────────────┘
+                                │
+                ┌───────────────┴───────────────┐
+                │                               │
+                ▼                               ▼
+    ┌───────────────────────┐       ┌──────────────────────┐
+    │  Tuya IoT Cloud       │       │  Smart Energy        │
+    │  Platform             │       │  Copilot Web App     │
+    │                       │       │  (Browser)           │
+    │  • Device Registry    │       │                      │
+    │  • API Gateway        │       │  • Dashboard UI      │
+    │  • Data Storage       │       │  • Voice Control     │
+    └───────────┬───────────┘       │  • Analytics         │
+                │                   └──────────────────────┘
+                │
+    ┌───────────┴────────────────────────────────────┐
+    │                                                 │
+    ▼                                                 ▼
+┌─────────────────────┐                   ┌─────────────────────┐
+│  Raspberry Pi 4     │                   │   User's Devices    │
+│  (Edge Controller)  │                   │   (via Browser)     │
+│                     │                   │                     │
+│  ┌───────────────┐  │                   │  • Desktop PC       │
+│  │ T5 AI Core    │  │ USB-C             │  • Laptop           │
+│  │ DevKit        │◄─┤──────┐            │  • Tablet           │
+│  │               │  │      │            │  • Smartphone       │
+│  │ • NPU 6 TOPS  │  │      │            └─────────────────────┘
+│  │ • Local AI    │  │      │
+│  │ • Processing  │  │      │
+│  └───────────────┘  │      │
+│                     │      │
+│  ┌───────────────┐  │      │ USB Connection
+│  │ OV5647 Camera │◄─┤──────┘
+│  │ Module        │  │ CSI Port
+│  │               │  │
+│  │ • Occupancy   │  │
+│  │ • Detection   │  │
+│  └───────────────┘  │
+│                     │
+└─────────┬───────────┘
+          │ WiFi/Network
+          │
+    ┌─────┴──────────────────────────────────────────┐
+    │                                                 │
+    ▼                                                 ▼
+┌─────────────────┐                       ┌─────────────────┐
+│ Tuya Smart Plug │                       │ Tuya Smart Plug │
+│ with Energy     │                       │ with Energy     │
+│ Monitoring      │                       │ Monitoring      │
+│                 │                       │                 │
+│ Device 1:       │                       │ Device 2:       │
+│ Living Room AC  │                       │ Kitchen Fridge  │
+└────────┬────────┘                       └────────┬────────┘
+         │                                         │
+    ┌────┴────┐                              ┌────┴────┐
+    │  HVAC   │                              │  Fridge │
+    │  Unit   │                              │         │
+    └─────────┘                              └─────────┘
+
+Additional Devices (same pattern):
+• Tuya Smart Bulbs (WiFi Connected)
+• Tuya Temperature/Humidity Sensors (WiFi/Zigbee)
+• Tuya Smart Switches (WiFi Connected)
+• Tuya Air Quality Monitors (WiFi Connected)
+
+Power Flow:  ─────►
+Data Flow:   ═════►
+USB-C:       ──────┤
+```
+
+### Data Flow Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    Real-Time Data Pipeline                    │
+└──────────────────────────────────────────────────────────────┘
+
+Tuya Device → Tuya Cloud → API Polling (30s) → Web Dashboard
+     │              │              │                  │
+     │              │              ▼                  │
+     │              │        ┌──────────┐            │
+     │              │        │ useKV    │            │
+     │              │        │ Storage  │            │
+     │              │        └──────────┘            │
+     │              │              │                  │
+     │              │              ▼                  │
+     │              │        ┌──────────┐            │
+     │              │        │   AI     │            │
+     │              │        │  Engine  │            │
+     │              │        └──────────┘            │
+     │              │              │                  │
+     │              │              ▼                  │
+     │              │     ┌──────────────┐           │
+     │              └────►│ Analytics &  │◄──────────┘
+     │                    │ Predictions  │
+     │                    └──────────────┘
+     │                           │
+     │                           ▼
+     │                  ┌─────────────────┐
+     └─────────────────►│ Control Actions │
+       (Commands)       └─────────────────┘
+```
+
+---
+
+## 🛠️ Hardware List
+
+### Required Hardware Components
+
+#### **1. Edge Computing Hub**
+
+**Raspberry Pi 4 Model B (4GB or 8GB RAM)**
+- **Model**: Raspberry Pi 4 Model B
+- **RAM**: 4GB (minimum) or 8GB (recommended)
+- **Storage**: 32GB microSD Card (Class 10, UHS-I)
+- **Connectivity**: Dual-band WiFi 802.11ac, Gigabit Ethernet, Bluetooth 5.0
+- **Power**: 5V/3A USB-C Power Supply
+- **Ports**: 4x USB 3.0, 2x USB 2.0, 2x micro-HDMI, CSI camera port, GPIO pins
+- **Purpose**: Runs local AI inference, camera processing, edge computing tasks
+- **Price**: ~$55-75 (varies by RAM configuration)
+- **Vendor**: [Raspberry Pi Foundation](https://www.raspberrypi.com/)
+
+**microSD Card**
+- **Model**: SanDisk Extreme 32GB microSDHC
+- **Speed**: UHS-I, U3, Class 10 (100MB/s read)
+- **Purpose**: Operating system and application storage
+- **Price**: ~$8-12
+- **Vendor**: Amazon, Best Buy
+
+#### **2. AI Acceleration Module**
+
+**Tuya T5 AI Core DevKit (T5AI-CORE)**
+- **Model**: T5AI-CORE Development Kit
+- **NPU**: 6 TOPS (Tera Operations Per Second)
+- **Processor**: ARM Cortex-A55 Quad-core 1.8GHz
+- **Memory**: 2GB DDR4
+- **Storage**: 16GB eMMC
+- **Connectivity**: USB-C (data + power), WiFi 6, Bluetooth 5.2
+- **AI Framework**: TensorFlow Lite, PyTorch Mobile, ONNX Runtime
+- **Purpose**: Hardware-accelerated AI inference for behavior learning, energy prediction, anomaly detection
+- **Dimensions**: 85mm x 55mm x 18mm
+- **Power**: 5V/2A via USB-C (can be powered from Raspberry Pi USB 3.0)
+- **Price**: ~$89-129
+- **Vendor**: [Tuya Smart](https://www.tuya.com/), [AliExpress](https://www.aliexpress.com/)
+
+#### **3. Computer Vision Sensor**
+
+**Raspberry Pi Camera Module V2 (OV5647)**
+- **Model**: Raspberry Pi Camera Module V2
+- **Sensor**: Sony IMX219 8-megapixel sensor (or OV5647 5MP alternative)
+- **Resolution**: 3280 x 2464 pixels (still), 1080p30/720p60 (video)
+- **Connection**: 15-pin ribbon cable to Raspberry Pi CSI port
+- **Lens**: Fixed focus, f/2.0 aperture
+- **Field of View**: 62.2° × 48.8°
+- **Purpose**: Occupancy detection, room activity monitoring (privacy-preserving)
+- **Price**: ~$25-30
+- **Vendor**: [Raspberry Pi Foundation](https://www.raspberrypi.com/), Amazon
+
+**Camera Case** (Optional)
+- **Model**: Official Raspberry Pi Camera Case
+- **Purpose**: Protect camera module and enable mounting
+- **Price**: ~$5-8
+
+#### **4. IoT Smart Devices** (Tuya Ecosystem)
+
+**Tuya Smart Plugs with Energy Monitoring**
+- **Model**: Tuya WiFi Smart Plug 16A (with Power Meter)
+- **Specifications**:
+  - Max Load: 16A / 3680W
+  - Voltage: 110-240V AC
+  - Connectivity: WiFi 2.4GHz (802.11 b/g/n)
+  - Energy Monitoring: Real-time voltage, current, power, energy consumption
+  - App Control: Tuya Smart / Smart Life app
+  - API: Full Tuya Cloud API support
+- **Purpose**: Monitor and control high-power devices (HVAC, heaters, appliances)
+- **Quantity**: 5-10 plugs (depending on coverage needs)
+- **Price**: ~$12-18 per plug
+- **Vendor**: Amazon, AliExpress
+
+**Tuya Smart WiFi Light Bulbs**
+- **Model**: Tuya RGB+CCT Smart LED Bulb 9W
+- **Specifications**:
+  - Power: 9W (60W equivalent)
+  - Color: 16 million colors + warm/cool white (2700K-6500K)
+  - Brightness: 800 lumens, dimmable 1-100%
+  - Connectivity: WiFi 2.4GHz
+  - Lifespan: 25,000 hours
+- **Purpose**: Smart lighting control and scheduling
+- **Quantity**: 5-15 bulbs (per room coverage)
+- **Price**: ~$8-12 per bulb
+- **Vendor**: Amazon, AliExpress
+
+**Tuya Temperature & Humidity Sensors**
+- **Model**: Tuya WiFi Temperature Humidity Sensor
+- **Specifications**:
+  - Temperature Range: -20°C to 60°C (±0.3°C accuracy)
+  - Humidity Range: 0-99% RH (±3% accuracy)
+  - Connectivity: WiFi 2.4GHz
+  - Battery: CR2032 (6-12 months lifespan)
+  - Display: LCD screen
+- **Purpose**: Monitor environmental conditions for HVAC optimization
+- **Quantity**: 3-5 sensors (one per room)
+- **Price**: ~$10-15 per sensor
+- **Vendor**: Amazon, AliExpress
+
+**Tuya Smart Switch (Wall Switch)**
+- **Model**: Tuya WiFi Smart Light Switch (1/2/3 Gang)
+- **Specifications**:
+  - Max Load: 10A per gang
+  - Voltage: 110-240V AC
+  - Connectivity: WiFi 2.4GHz
+  - Installation: Requires neutral wire
+  - Control: Touch panel + app + voice
+- **Purpose**: Replace existing light switches with smart controls
+- **Quantity**: 3-8 switches (depending on rooms)
+- **Price**: ~$15-25 per switch
+- **Vendor**: Amazon, AliExpress
+
+**Tuya Smart IR Remote Controller**
+- **Model**: Tuya WiFi-to-IR Universal Remote Hub
+- **Specifications**:
+  - Connectivity: WiFi 2.4GHz
+  - IR Range: 8-10 meters, 360° coverage
+  - Device Support: TV, AC, Fan, Set-top box, Audio systems
+  - Database: 10,000+ pre-configured IR codes
+- **Purpose**: Control non-smart IR devices (legacy AC units, TVs)
+- **Quantity**: 1-3 hubs (per floor/area)
+- **Price**: ~$12-18 per hub
+- **Vendor**: Amazon, AliExpress
+
+#### **5. Network & Power Infrastructure**
+
+**WiFi Router (if upgrade needed)**
+- **Model**: TP-Link Archer AX21 WiFi 6 Router
+- **Specifications**:
+  - WiFi Standard: WiFi 6 (802.11ax)
+  - Speed: 1.8 Gbps (1200Mbps @ 5GHz + 574Mbps @ 2.4GHz)
+  - Coverage: 2000 sq ft
+  - Simultaneous Devices: 40+
+- **Purpose**: Reliable network for all IoT devices
+- **Price**: ~$70-90
+- **Vendor**: Amazon, Best Buy
+
+**USB-C Cable (Raspberry Pi to T5 Connection)**
+- **Model**: Anker USB-C to USB 3.0 Cable (1-2 feet)
+- **Specifications**: USB 3.1 Gen 2, 10Gbps data, 5V/3A power
+- **Purpose**: Connect T5 AI Core to Raspberry Pi
+- **Price**: ~$8-12
+
+**Power Strip with Surge Protection**
+- **Model**: Anker PowerExtend USB-C Strip
+- **Specifications**: 12 AC outlets, 3 USB-C, 3 USB-A, 4000J surge protection
+- **Purpose**: Power all devices safely
+- **Price**: ~$40-50
+
+### Complete System Cost Estimate
+
+| Component | Quantity | Unit Price | Total |
+|-----------|----------|------------|-------|
+| Raspberry Pi 4 (4GB) + microSD | 1 | $65 | $65 |
+| Tuya T5 AI Core DevKit | 1 | $109 | $109 |
+| Raspberry Pi Camera V2 | 1 | $28 | $28 |
+| Tuya Smart Plugs (16A w/ meter) | 8 | $15 | $120 |
+| Tuya Smart Bulbs (RGB+CCT) | 10 | $10 | $100 |
+| Tuya Temp/Humidity Sensors | 4 | $12 | $48 |
+| Tuya Smart Switches | 5 | $20 | $100 |
+| Tuya IR Remote Hub | 2 | $15 | $30 |
+| USB-C Cable (high-quality) | 1 | $10 | $10 |
+| Power Supply & Cables | 1 | $30 | $30 |
+| **TOTAL SYSTEM COST** | | | **$640** |
+
+**Budget Options:**
+- **Starter Kit**: Raspberry Pi + T5 + 4 smart plugs + 5 bulbs = **$290**
+- **Standard Kit**: Full system as above = **$640**
+- **Premium Kit**: Add more sensors, switches, and devices = **$800-1000**
+
+### Hardware Setup Instructions
+
+1. **Raspberry Pi Setup** (30 minutes)
+   - Flash Raspberry Pi OS (64-bit) to microSD card
+   - Connect HDMI, keyboard, mouse for initial setup
+   - Configure WiFi network and enable SSH
+   - Update system: `sudo apt update && sudo apt upgrade -y`
+
+2. **Camera Module Installation** (5 minutes)
+   - Power off Raspberry Pi
+   - Connect camera ribbon cable to CSI port
+   - Enable camera: `sudo raspi-config` → Interface Options → Camera → Enable
+   - Test: `libcamera-hello`
+
+3. **T5 AI Core Connection** (10 minutes)
+   - Connect T5 DevKit to Raspberry Pi USB 3.0 port (blue port) using USB-C cable
+   - Verify connection: `lsusb` (should show T5 device)
+   - Install Tuya SDK: Follow [T5_QUICK_START.md](https://github.com/MiChaelinzo/Project-Concept-Smart-Energy-Copilot/blob/main/T5_QUICK_START.md)
+   - Test AI inference capabilities
+
+4. **Tuya IoT Platform Setup** (20 minutes)
+   - Create account at [iot.tuya.com](https://iot.tuya.com)
+   - Create Cloud Project
+   - Subscribe to required APIs (Device Management, Statistics, Control)
+   - Link Tuya Smart app to cloud project
+   - Note Access ID and Access Key for web dashboard
+
+5. **Device Pairing** (5 minutes per device)
+   - Download Tuya Smart app (iOS/Android)
+   - Add each device following manufacturer instructions
+   - Assign rooms and friendly names
+   - Verify devices appear in Tuya IoT Platform
+
+6. **Web Dashboard Configuration** (10 minutes)
+   - Access Smart Energy Copilot dashboard
+   - Navigate to "Tuya Devices" tab
+   - Enter Access ID and Access Key
+   - Click "Discover Devices" to import all devices
+   - Start monitoring and controlling!
+
+---
+
 ## 🌟 Latest Features (v3.3)
 
 ### 🔌 Tuya Device Integration
