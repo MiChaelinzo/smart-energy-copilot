@@ -31,6 +31,8 @@ import { EnergyGridOverlay } from '@/components/EnergyGridOverlay'
 import { EnergyPulse } from '@/components/EnergyPulse'
 import { LightningEffect } from '@/components/LightningEffect'
 import { FloatingEnergyParticles } from '@/components/FloatingEnergyParticles'
+import { WeatherOptimizationPanel } from '@/components/WeatherOptimizationPanel'
+import { UserManagementPanel } from '@/components/UserManagementPanel'
 import { 
   MOCK_DEVICES, 
   MOCK_SCENES, 
@@ -42,7 +44,7 @@ import {
   MOCK_ACHIEVEMENTS
 } from '@/lib/mockData'
 import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule, ElectricityRate, MaintenanceAlert, Achievement, TuyaCredentials, TuyaDevice, AdaptiveSchedule, AIScheduleRecommendation } from '@/types'
-import { mockTuyaDeviceDiscovery } from '@/lib/tuyaApi'
+import { tuyaDeviceDiscovery } from '@/lib/tuyaApi'
 import { generateAIScheduleRecommendations, convertRecommendationToSchedule } from '@/lib/aiScheduling'
 import { 
   Lightning, 
@@ -61,7 +63,9 @@ import {
   FileText,
   ArrowsClockwise,
   Stack,
-  Gear
+  Gear,
+  Cloud,
+  Users
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -220,7 +224,7 @@ function App() {
       throw new Error('No Tuya credentials configured')
     }
     
-    const discoveredDevices = await mockTuyaDeviceDiscovery(tuyaCredentials)
+    const discoveredDevices = await tuyaDeviceDiscovery(tuyaCredentials)
     return discoveredDevices
   }
 
@@ -584,6 +588,28 @@ function App() {
                   <Gear className="w-4 h-4" />
                   Settings
                 </button>
+                <button
+                  onClick={() => setActiveTab('weather')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
+                    activeTab === 'weather'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Cloud className="w-4 h-4" />
+                  Weather
+                </button>
+                <button
+                  onClick={() => setActiveTab('users')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
+                    activeTab === 'users'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Users className="w-4 h-4" />
+                  Users
+                </button>
               </div>
             </div>
 
@@ -696,6 +722,14 @@ function App() {
 
             <TabsContent value="settings" className="space-y-6">
               <SettingsPanel onReplayWelcomeTour={handleReplayWelcomeTour} />
+            </TabsContent>
+
+            <TabsContent value="weather" className="space-y-6">
+              <WeatherOptimizationPanel />
+            </TabsContent>
+
+            <TabsContent value="users" className="space-y-6">
+              <UserManagementPanel />
             </TabsContent>
           </Tabs>
         </main>

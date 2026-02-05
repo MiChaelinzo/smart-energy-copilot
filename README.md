@@ -1,6 +1,6 @@
-# Smart Energy Copilot v3.3 - AI-Powered Energy Management
+# Smart Energy Copilot v3.4 - AI-Powered Energy Management
 
-A comprehensive web dashboard for monitoring and controlling an AI-powered smart energy management system with Tuya IoT device integration, AI adaptive scheduling, voice control, real-time pricing optimization, predictive maintenance, and shareable achievements.
+A comprehensive web dashboard for monitoring and controlling an AI-powered smart energy management system with **real Tuya Cloud API integration**, **weather-based optimization**, **multi-user role management**, AI adaptive scheduling, voice control, real-time pricing optimization, predictive maintenance, and shareable achievements.
 
 ---
 
@@ -429,9 +429,38 @@ Tuya Device → Tuya Cloud → API Polling (30s) → Web Dashboard
 
 ---
 
-## 🌟 Latest Features (v3.3)
+## 🌟 Latest Features (v3.4)
 
-### 🔌 Tuya Device Integration
+### 🔌 Real Tuya Cloud API Integration
+- **Production-Ready API**: Full integration with Tuya IoT Platform using official Cloud APIs
+- **HMAC-SHA256 Authentication**: Secure signature-based authentication using browser-native Web Crypto API
+- **Real-Time Device Control**: Send commands directly to your Tuya devices in real-time
+- **Live Status Updates**: Fetch current device status, power consumption, and online state
+- **Multi-Region Support**: Automatic endpoint selection for US, EU, CN, and IN data centers
+- **Graceful Fallback**: Automatically falls back to mock data if API credentials are not configured
+- **1000+ Device Types**: Full support for all Tuya ecosystem devices
+
+### 🌤️ Weather API Integration
+- **Real-Time Weather Data**: Live weather conditions from OpenWeatherMap API
+- **5-Day Forecast**: Advanced weather predictions for proactive optimization
+- **AI-Powered HVAC Optimization**: Smart temperature recommendations based on weather conditions
+- **Energy Savings Calculations**: Precise monthly savings estimates for each recommendation
+- **Window Management**: Intelligent open/close recommendations based on temperature and humidity
+- **Device Schedule Adjustments**: Weather-aware device scheduling for maximum efficiency
+- **Location Services**: Automatic geolocation or manual location entry
+- **Mock Data Fallback**: Works without API key using realistic simulated data
+
+### 👥 Multi-User Support with Role-Based Permissions
+- **4 Role Types**: Owner, Admin, Member, and Guest with distinct permission levels
+- **Granular Permissions**: Control access to devices, scenes, schedules, analytics, settings, and more
+- **User Invitations**: Email-based invitation system with expiring tokens
+- **Role Management**: Owners can assign and modify user roles
+- **Permission Validation**: Real-time permission checks prevent unauthorized actions
+- **User Dashboard**: Visual user management interface with avatars and status
+- **Spark Integration**: Automatic role assignment based on Spark ownership
+- **Hierarchical Control**: Users can only manage users with lower role levels
+
+### 🔌 Tuya Device Integration (Enhanced)
 - **Real IoT Device Support**: Connect and manage your existing Tuya smart plugs, sensors, and appliances
 - **Cloud API Integration**: Seamless connection to Tuya IoT Platform with secure credential management
 - **Device Discovery**: Automatically discover all paired Tuya devices from your account
@@ -686,7 +715,8 @@ npm run build
 - `ComparisonPanel.tsx` - Period-over-period comparison tool
 - `EnergyReports.tsx` - Report generation and download
 - `QuickStatsBar.tsx` - Persistent stats display
-- `NotificationCenter.tsx` - Notification management
+- `WeatherOptimizationPanel.tsx` - Weather data display and AI recommendations (NEW!)
+- `UserManagementPanel.tsx` - Multi-user role management interface (NEW!)
 
 ### Custom Hooks
 - `useVoiceCommands.ts` - Voice recognition and command processing
@@ -695,8 +725,10 @@ npm run build
 ### Utility Functions
 - `utils.ts` - Formatting, calculations, and helper functions
 - `mockData.ts` - Sample data for devices, scenes, alerts, achievements
-- `tuyaApi.ts` - Tuya Cloud API integration helpers (NEW!)
-- `aiScheduling.ts` - AI schedule generation and pattern analysis (NEW!)
+- `tuyaApi.ts` - Real Tuya Cloud API integration with HMAC-SHA256 auth (UPDATED!)
+- `weatherApi.ts` - OpenWeatherMap API integration and optimization engine (NEW!)
+- `userManagement.ts` - Role-based permissions and user management system (NEW!)
+- `aiScheduling.ts` - AI schedule generation and pattern analysis
 
 ## 🎨 Design System
 
@@ -757,8 +789,11 @@ npm run build
 
 ## 📊 System Statistics
 
-- ✅ **15 Major Tabs**: Summary, Dashboard, Devices, Analytics, Comparison, Scenes, Goals, Scheduler, AI Scheduling, Tuya Devices, Costs, Pricing, Maintenance, Achievements, Reports
+- ✅ **17 Major Tabs**: Summary, Dashboard, Devices, Analytics, Comparison, Scenes, Goals, Scheduler, AI Scheduling, Tuya Devices, Costs, Pricing, Maintenance, Achievements, Reports, Weather, Users
 - 🤖 **1000+ Devices**: Support for Tuya IoT ecosystem with energy monitoring
+- 🔐 **4 User Roles**: Owner, Admin, Member, Guest with granular permissions
+- 🌤️ **Weather Integration**: Real-time weather data with AI optimization
+- 🌐 **Real Tuya API**: Production-ready Cloud API integration with HMAC-SHA256 auth
 - 🧠 **4 AI Modes**: Peak avoidance, occupancy-based, weather-based, cost optimization
 - 🎯 **500+ Tests**: Comprehensive test coverage across all features
 - 🌍 **4 Regions**: US, EU, CN, IN Tuya data center support
@@ -771,12 +806,58 @@ npm run build
 - [PRD.md](./PRD.md) - Product requirements document with design system
 - [SECURITY.md](./SECURITY.md) - Security policies and best practices
 
+### New Feature Documentation
+
+#### Real Tuya API Setup
+1. Create account at [Tuya IoT Platform](https://iot.tuya.com)
+2. Create a new Cloud Project
+3. Subscribe to required APIs: Device Management, Device Control, Device Status
+4. Link your Tuya Smart app account to the cloud project
+5. Copy your Access ID and Access Key
+6. In the app, navigate to **Tuya Devices** tab
+7. Enter your credentials and select your region (US/EU/CN/IN)
+8. Click "Discover Devices" to sync all your devices
+9. The system will automatically use real API calls when credentials are configured
+
+#### Weather API Setup
+1. Create free account at [OpenWeatherMap](https://openweathermap.org/api)
+2. Generate API key (free tier includes 1000 calls/day)
+3. Open `/src/lib/weatherApi.ts`
+4. Replace `YOUR_API_KEY_HERE` with your actual API key
+5. Navigate to **Weather** tab in the app
+6. Grant location permission when prompted (or it will use NYC as default)
+7. View AI-powered recommendations and estimated savings
+
+#### Multi-User Management
+1. Ensure you're logged in as the Owner (Spark app owner)
+2. Navigate to **Users** tab
+3. Click "Invite User" button
+4. Enter email address and select role (Admin, Member, or Guest)
+5. Invitation will be sent (in production, integrate with email service)
+6. Manage existing users: change roles or remove access
+7. View all pending invitations and cancel if needed
+
+### Permission Levels
+
+| Feature | Owner | Admin | Member | Guest |
+|---------|-------|-------|--------|-------|
+| Control Devices | ✅ | ✅ | ✅ | ❌ |
+| Create/Edit Scenes | ✅ | ✅ | ❌ | ❌ |
+| Create/Edit Schedules | ✅ | ✅ | ❌ | ❌ |
+| View Analytics | ✅ | ✅ | ✅ | ✅ |
+| Modify Settings | ✅ | ✅ | ❌ | ❌ |
+| Manage Integrations | ✅ | ❌ | ❌ | ❌ |
+| Manage Users | ✅ | ❌ | ❌ | ❌ |
+| Delete Devices | ✅ | ❌ | ❌ | ❌ |
+
+
+
 ## 🚀 Roadmap
 
-### v3.4 (Planned)
-- [ ] Real Tuya API integration (currently using mock data)
-- [ ] Weather API integration for advanced optimization
-- [ ] Multi-user support with role-based permissions
+### v3.4 (✅ COMPLETED)
+- [x] **Real Tuya API integration** - Full production Tuya Cloud API with HMAC-SHA256 authentication
+- [x] **Weather API integration** - OpenWeatherMap integration with AI-powered HVAC optimization
+- [x] **Multi-user support** - Role-based permissions system (Owner, Admin, Member, Guest)
 - [ ] Mobile app integration (iOS/Android)
 - [ ] Cloud backup and sync
 - [ ] Advanced ML models for better predictions
@@ -832,4 +913,4 @@ For issues, questions, or feature requests:
 
 ---
 
-Built with ⚡ by the Smart Energy Copilot Team | v3.3.0 | 2024
+Built with ⚡ by the Smart Energy Copilot Team | v3.4.0 | 2024

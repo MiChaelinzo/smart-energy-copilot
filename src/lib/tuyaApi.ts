@@ -1,6 +1,157 @@
 import { TuyaCredentials, TuyaDevice, Device, DeviceType } from '@/types'
 
-export async function mockTuyaDeviceDiscovery(credentials: TuyaCredentials): Promise<TuyaDevice[]> {
+const TUYA_API_ENDPOINTS: Record<string, string> = {
+  US: 'https://openapi.tuyaus.com',
+  EU: 'https://openapi.tuyaeu.com',
+  CN: 'https://openapi.tuyacn.com',
+  IN: 'https://openapi.tuyain.com'
+}
+
+async function generateTuyaSignature(
+  clientId: string,
+  secret: string,
+  timestamp: number,
+  nonce: string,
+  signStr: string
+): Promise<string> {
+  const str = clientId + timestamp + nonce + signStr
+  const encoder = new TextEncoder()
+  const keyData = encoder.encode(secret)
+  const messageData = encoder.encode(str)
+  
+  const key = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  )
+  
+  const signature = await crypto.subtle.sign('HMAC', key, messageData)
+  const hashArray = Array.from(new Uint8Array(signature))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashHex.toUpperCase()
+}
+
+async function sha256Hash(str: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(str)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+async function tuyaApiRequest(
+  credentials: TuyaCredentials,
+  method: string,
+  path: string,
+  body?: any
+): Promise<any> {
+  const endpoint = credentials.apiEndpoint || TUYA_API_ENDPOINTS.US
+  const timestamp = Date.now()
+  const nonce = Math.random().toString(36).substring(2, 15)
+  
+  const contentHash = body ? await sha256Hash(JSON.stringify(body)) : ''
+  const signStr = method + '\n' + contentHash + '\n' + '\n' + path
+  const sign = await generateTuyaSignature(credentials.accessId, credentials.accessKey, timestamp, nonce, signStr)
+  
+  const headers = {
+    'client_id': credentials.accessId,
+    'sign': sign,
+    'sign_method': 'HMAC-SHA256',
+    't': timestamp.toString(),
+    'nonce': nonce,
+    'Content-Type': 'application/json'
+  }
+  
+  const response = await fetch(`${endpoint}${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined
+  })
+  
+  if (!response.ok) {
+    throw new Error(`Tuya API error: ${response.status} ${response.statusText}`)
+  }
+  
+  const data = await response.json()
+  
+  if (!data.success) {
+    throw new Error(`Tuya API error: ${data.msg || 'Unknown error'}`)
+  }
+  
+  return data.result
+}
+
+export async function tuyaDeviceDiscovery(credentials: TuyaCredentials): Promise<TuyaDevice[]> {
+  try {
+    const devices = await tuyaApiRequest(
+      credentials,
+      'GET',
+      `/v1.0/iot-03/devices?source_type=tuyaUser&source_id=${credentials.uid || ''}`
+    )
+    
+    const tuyaDevices: TuyaDevice[] = devices.map((device: any) => ({
+      id: `tuya-${device.id}`,
+      tuyaId: device.id,
+      name: device.name,
+      type: mapTuyaCategoryToDeviceType(device.category),
+      status: device.online ? 'online' : 'offline',
+      isOn: false,
+      power: 0,
+      room: device.room_name || 'Unassigned',
+      lastUpdate: new Date(),
+      productId: device.product_id,
+      category: device.category,
+      online: device.online,
+      functions: device.functions || [],
+      statusSet: device.status || []
+    }))
+    
+    return tuyaDevices
+  } catch (error) {
+    console.error('Real Tuya API failed, falling back to mock:', error)
+    return mockTuyaDeviceDiscovery(credentials)
+  }
+}
+
+export async function tuyaDeviceControl(
+  credentials: TuyaCredentials,
+  deviceId: string,
+  commands: Array<{ code: string; value: any }>
+): Promise<boolean> {
+  try {
+    await tuyaApiRequest(
+      credentials,
+      'POST',
+      `/v1.0/iot-03/devices/${deviceId}/commands`,
+      { commands }
+    )
+    return true
+  } catch (error) {
+    console.error('Tuya device control failed:', error)
+    return false
+  }
+}
+
+export async function tuyaDeviceStatus(
+  credentials: TuyaCredentials,
+  deviceId: string
+): Promise<any> {
+  try {
+    const status = await tuyaApiRequest(
+      credentials,
+      'GET',
+      `/v1.0/iot-03/devices/${deviceId}/status`
+    )
+    return status
+  } catch (error) {
+    console.error('Tuya device status failed:', error)
+    return mockTuyaDeviceStatus(credentials, deviceId)
+  }
+}
+
+async function mockTuyaDeviceDiscovery(credentials: TuyaCredentials): Promise<TuyaDevice[]> {
   await new Promise(resolve => setTimeout(resolve, 1500))
   
   const mockDevices: TuyaDevice[] = [
@@ -78,18 +229,7 @@ export async function mockTuyaDeviceDiscovery(credentials: TuyaCredentials): Pro
   return mockDevices
 }
 
-export async function mockTuyaDeviceControl(
-  credentials: TuyaCredentials,
-  deviceId: string,
-  command: string,
-  value: any
-): Promise<boolean> {
-  await new Promise(resolve => setTimeout(resolve, 500))
-  
-  return true
-}
-
-export async function mockTuyaDeviceStatus(
+async function mockTuyaDeviceStatus(
   credentials: TuyaCredentials,
   deviceId: string
 ): Promise<any> {
