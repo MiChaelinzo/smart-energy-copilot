@@ -1,11 +1,11 @@
 export interface WeatherData {
-  temperature: number
   humidity: number
-  windSpeed: number
-  condition: string
-  pressure: number
-  visibility: number
-  feelsLike: number
+  condition: strin
+  visibility: numbe
+  timestamp: Date
+
+  date: Date
+  tempLow: number
   timestamp: Date
 }
 
@@ -30,18 +30,18 @@ export interface WeatherOptimizationRecommendation {
   deviceScheduleAdjustments: Array<{
     deviceId: string
     deviceName: string
-    suggestion: string
-    estimatedSavings: number
-  }>
-}
-
-export async function fetchCurrentWeather(lat: number, lon: number): Promise<WeatherData | null> {
-  try {
-    const apiKey = 'DEMO_API_KEY'
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`
+    const response = a
     )
     
+ 
+
+    return {
+      h
+      condition: data.weather[0].
+      visibility: data.visibility
+      timestamp: new Date()
+  } c
+  }
     if (!response.ok) {
       throw new Error('Weather API request failed')
     }
@@ -142,147 +142,147 @@ export async function getUserLocation(): Promise<{
         } else {
           resolve(null)
         }
-      },
+      ta
       () => {
-        resolve(null)
+    }
       }
-    )
+  if 
   })
-}
+ 
 
-function getHVACRecommendation(
-  current: WeatherData
+  }
+  return {
 ): { targetTemp: number; reason: string; energySavings: number } {
   const currentTemp = current.temperature
   
-  if (currentTemp > 78) {
+
     return {
-      targetTemp: 74,
+): { action: 'open' |
       reason: 'High temperature detected. Cooling to 74°F will optimize comfort and energy use.',
       energySavings: 8.5
     }
   } else if (currentTemp < 65) {
     return {
-      targetTemp: 68,
+    }
       reason: 'Low temperature detected. Heating to 68°F balances comfort and efficiency.',
-      energySavings: 7.2
+  if (outsideTemp > 85 |
     }
-  }
+   
   
-  if (current.humidity > 70) {
-    return {
-      targetTemp: 76,
-      reason: 'High humidity detected. Slightly lower temperature recommended for comfort.',
-      energySavings: 5.5
-    }
-  }
+      condition: ['Clear', 'Pa
+    })
   
-  return {
-    targetTemp: 72,
-    reason: 'Weather conditions are optimal. Maintaining comfortable temperature.',
-    energySavings: 6.0
-  }
 }
 
-function getWindowRecommendation(
-  current: WeatherData
-): { action: 'open' | 'close' | 'neutral'; reason: string } {
-  const insideTargetTemp = 72
-  const outsideTemp = current.temperature
-  const tempDiff = Math.abs(outsideTemp - insideTargetTemp)
-  
-  if (tempDiff < 5 && current.humidity < 60) {
-    return {
-      action: 'open',
-      reason: 'Outside temperature is ideal. Open windows to save on HVAC costs.'
-    }
-  }
-  
-  if (outsideTemp > 85 || outsideTemp < 55) {
-    return {
-      action: 'close',
-      reason: 'Outside temperature is extreme. Keep windows closed and use HVAC.'
-    }
-  }
-  
-  return {
-    action: 'neutral',
-    reason: 'Current conditions are moderate. Window position is at your discretion.'
-  }
-}
 
-function getDeviceAdjustments(current: WeatherData): Array<{
-  deviceId: string
-  deviceName: string
-  suggestion: string
-  estimatedSavings: number
-}> {
-  const adjustments: Array<{
-    deviceId: string
-    deviceName: string
-    suggestion: string
-    estimatedSavings: number
-  }> = []
-  
-  if (current.condition.toLowerCase().includes('rain') || current.condition.toLowerCase().includes('cloud')) {
-    adjustments.push({
-      deviceId: 'lights-1',
-      deviceName: 'Indoor Lighting',
-      suggestion: 'Cloudy conditions detected. Consider reducing artificial lighting near windows.',
-      estimatedSavings: 2.3
-    })
-  }
-  
-  if (current.condition.toLowerCase().includes('rain')) {
-    adjustments.push({
-      deviceId: 'water-heater-1',
-      deviceName: 'Water Heater',
-      suggestion: 'Reduce water heater temperature during precipitation to save energy.',
-      estimatedSavings: 4.5
-    })
-  }
-  
-  if (current.windSpeed > 15) {
-    adjustments.push({
-      deviceId: 'outdoor-lights-1',
-      deviceName: 'Outdoor Lighting',
-      suggestion: 'High winds detected. Consider motion-sensor only mode for outdoor lights.',
-      estimatedSavings: 3.2
-    })
-  }
-  
-  return adjustments
-}
 
-function getMockWeatherData(): WeatherData {
-  return {
-    temperature: 72,
-    humidity: 55,
-    windSpeed: 8,
-    condition: 'Clear',
-    pressure: 1013,
-    visibility: 10000,
-    feelsLike: 70,
-    timestamp: new Date()
-  }
-}
 
-function getMockForecastData(): WeatherForecast[] {
-  const forecasts: WeatherForecast[] = []
-  const today = new Date()
-  
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today)
-    date.setDate(date.getDate() + i)
-    
-    forecasts.push({
-      date,
-      tempHigh: 75 + Math.random() * 10,
-      tempLow: 60 + Math.random() * 10,
-      condition: ['Clear', 'Partly Cloudy', 'Cloudy', 'Rain'][Math.floor(Math.random() * 4)],
-      precipitation: Math.random() * 30
-    })
-  }
-  
-  return forecasts
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
