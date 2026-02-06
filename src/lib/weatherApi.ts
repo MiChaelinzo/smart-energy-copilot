@@ -1,22 +1,21 @@
 export interface WeatherData {
   temperature: number
+  feelsLike: number
   humidity: number
-  windSpeed: numbe
-  condition: string
   windSpeed: number
+  condition: string
   pressure: number
   visibility: number
+  timestamp: Date
+}
 
+export interface WeatherForecast {
   date: Date
- 
-
-
-  hvacRecomm
-    reason: string
-  }
-    action: 'open' 
-  }
- 
+  tempHigh: number
+  tempLow: number
+  condition: string
+  precipitation: number
+}
 
 export interface WeatherRecommendation {
   hvacRecommendation: {
@@ -38,46 +37,45 @@ export interface WeatherRecommendation {
 
 const OPENWEATHER_API_KEY = 'YOUR_API_KEY_HERE'
 
-      humidity: data.main.humidity,
-      w
-      visibility: data.visibility
-      timestamp: new Date()
-  } c
-    
-}
-export async function getWeatherForecast(lat: number,
-    c
+export async function getCurrentWeather(lat: number, lon: number): Promise<WeatherData> {
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=imperial`
+    )
     
     if (!response.ok) {
-    
-    const da
-    const processedDates = new Set
-    for (const item of data.list) {
-      const dateKey = date.toDateSt
-      if (!processedDates.has(dateKey)
-        dailyForecasts.push({
-          tempHigh: item.main.temp_
-          condition: item.weather[0].main
-        })
-      
+      throw new Error('Failed to fetch weather data')
     }
-    return dailyFor
-    console.error('Error fetching forecast:', error
-  }
-
- 
-
-  const windowRecommendation = getWindowRecommendation(current)
-  
-    hvacRecommendation,
-    deviceScheduleAdjustments
-}
-expo
-  forecast: WeatherFore
-  return new Promise((resolve) => {
-     
     
-    navigator.geolocation.getCurrentPo
+    const data = await response.json()
+    
+    return {
+      temperature: data.main.temp,
+      feelsLike: data.main.feels_like,
+      humidity: data.main.humidity,
+      windSpeed: data.wind.speed,
+      condition: data.weather[0].main,
+      pressure: data.main.pressure,
+      visibility: data.visibility,
+      timestamp: new Date()
+    }
+  } catch (error) {
+    console.error('Error fetching weather:', error)
+    return getMockWeatherData()
+  }
+}
+
+export async function getWeatherForecast(lat: number, lon: number): Promise<WeatherForecast[]> {
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=imperial`
+    )
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch forecast data')
+    }
+    
+    const data = await response.json()
     const dailyForecasts: WeatherForecast[] = []
     const processedDates = new Set<string>()
     
@@ -236,43 +234,52 @@ function getDeviceAdjustments(
     adjustments.push({
       deviceId: 'water-heater-1',
       deviceName: 'Water Heater',
+      suggestion: 'Reduce water heater temperature during precipitation to save energy.',
+      estimatedSavings: 4.5
+    })
+  }
+  
+  if (current.windSpeed > 15) {
+    adjustments.push({
+      deviceId: 'outdoor-lights-1',
+      deviceName: 'Outdoor Lighting',
+      suggestion: 'High winds detected. Consider motion-sensor only mode for outdoor lights.',
+      estimatedSavings: 3.2
+    })
+  }
+  
+  return adjustments
+}
 
+function getMockWeatherData(): WeatherData {
+  return {
+    temperature: 72,
+    feelsLike: 70,
+    humidity: 55,
+    windSpeed: 8,
+    condition: 'Clear',
+    pressure: 1013,
+    visibility: 10000,
+    timestamp: new Date()
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function getMockForecastData(): WeatherForecast[] {
+  const forecasts: WeatherForecast[] = []
+  const today = new Date()
+  
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(today)
+    date.setDate(date.getDate() + i)
+    
+    forecasts.push({
+      date,
+      tempHigh: 75 + Math.random() * 10,
+      tempLow: 60 + Math.random() * 10,
+      condition: ['Clear', 'Partly Cloudy', 'Cloudy', 'Rain'][Math.floor(Math.random() * 4)],
+      precipitation: Math.random() * 30
+    })
+  }
+  
+  return forecasts
+}
