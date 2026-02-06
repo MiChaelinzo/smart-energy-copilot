@@ -1,22 +1,22 @@
 export interface WeatherData {
   temperature: number
-  feelsLike: number
   humidity: number
+  windSpeed: numbe
   condition: string
   windSpeed: number
   pressure: number
   visibility: number
-  uvIndex: number
-  timestamp: Date
-}
 
-export interface WeatherForecast {
   date: Date
-  tempHigh: number
-  tempLow: number
-  condition: string
-  precipitation: number
-}
+ 
+
+
+  hvacRecomm
+    reason: string
+  }
+    action: 'open' 
+  }
+ 
 
 export interface WeatherRecommendation {
   hvacRecommendation: {
@@ -38,46 +38,46 @@ export interface WeatherRecommendation {
 
 const OPENWEATHER_API_KEY = 'YOUR_API_KEY_HERE'
 
-export async function getCurrentWeather(lat: number, lon: number): Promise<WeatherData> {
-  try {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=imperial`
-    )
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch weather data')
-    }
-    
-    const data = await response.json()
-    
-    return {
-      temperature: data.main.temp,
-      feelsLike: data.main.feels_like,
       humidity: data.main.humidity,
-      condition: data.weather[0].main,
-      windSpeed: data.wind.speed,
-      pressure: data.main.pressure,
-      visibility: data.visibility / 1000,
-      uvIndex: data.uvi || 5,
+      w
+      visibility: data.visibility
       timestamp: new Date()
-    }
-  } catch (error) {
-    console.error('Error fetching weather:', error)
-    return getMockWeatherData()
-  }
+  } c
+    
 }
-
-export async function getWeatherForecast(lat: number, lon: number): Promise<WeatherForecast[]> {
-  try {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=imperial`
-    )
+export async function getWeatherForecast(lat: number,
+    c
     
     if (!response.ok) {
-      throw new Error('Failed to fetch forecast data')
-    }
     
-    const data = await response.json()
+    const da
+    const processedDates = new Set
+    for (const item of data.list) {
+      const dateKey = date.toDateSt
+      if (!processedDates.has(dateKey)
+        dailyForecasts.push({
+          tempHigh: item.main.temp_
+          condition: item.weather[0].main
+        })
+      
+    }
+    return dailyFor
+    console.error('Error fetching forecast:', error
+  }
+
+ 
+
+  const windowRecommendation = getWindowRecommendation(current)
+  
+    hvacRecommendation,
+    deviceScheduleAdjustments
+}
+expo
+  forecast: WeatherFore
+  return new Promise((resolve) => {
+     
+    
+    navigator.geolocation.getCurrentPo
     const dailyForecasts: WeatherForecast[] = []
     const processedDates = new Set<string>()
     
@@ -236,43 +236,43 @@ function getDeviceAdjustments(
     adjustments.push({
       deviceId: 'water-heater-1',
       deviceName: 'Water Heater',
-      suggestion: 'Reduce runtime during precipitation to save energy.',
-      estimatedSavings: 3.8
-    })
-  }
-  
-  return adjustments
-}
 
-function getMockWeatherData(): WeatherData {
-  return {
-    temperature: 72,
-    feelsLike: 70,
-    humidity: 55,
-    condition: 'Clear',
-    windSpeed: 5,
-    pressure: 1013,
-    visibility: 10,
-    uvIndex: 5,
-    timestamp: new Date()
-  }
-}
 
-function getMockForecastData(): WeatherForecast[] {
-  const forecasts: WeatherForecast[] = []
-  
-  for (let i = 0; i < 7; i++) {
-    const date = new Date()
-    date.setDate(date.getDate() + i)
-    
-    forecasts.push({
-      date,
-      tempHigh: 75 + Math.random() * 10,
-      tempLow: 55 + Math.random() * 10,
-      condition: ['Clear', 'Cloudy', 'Rain'][Math.floor(Math.random() * 3)],
-      precipitation: Math.random() * 50
-    })
-  }
-  
-  return forecasts
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
