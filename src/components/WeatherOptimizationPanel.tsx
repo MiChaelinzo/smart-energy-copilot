@@ -18,18 +18,18 @@ import {
 import { 
   WeatherData, 
   WeatherForecast, 
-  WeatherRecommendation,
+  WeatherOptimizationRecommendation,
   getCurrentWeather,
   getWeatherForecast,
-  generateWeatherRecommendations,
-  getWeatherByLocation
+  generateWeatherOptimization,
+  getWeatherWithLocation
 } from '@/lib/weatherApi'
 import { formatCurrency } from '@/lib/utils'
 
 export function WeatherOptimizationPanel() {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [forecast, setForecast] = useState<WeatherForecast[]>([])
-  const [optimization, setOptimization] = useState<WeatherRecommendation | null>(null)
+  const [optimization, setOptimization] = useState<WeatherOptimizationRecommendation | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -38,7 +38,7 @@ export function WeatherOptimizationPanel() {
     setError(null)
     
     try {
-      const locationData = await getWeatherByLocation()
+      const locationData = await getWeatherWithLocation()
       
       if (!locationData) {
         setError('Location access denied. Using mock data.')
@@ -50,7 +50,7 @@ export function WeatherOptimizationPanel() {
       setWeather(currentWeather)
       setForecast(weatherForecast)
       
-      const optimizationData = generateWeatherRecommendations(currentWeather, weatherForecast)
+      const optimizationData = generateWeatherOptimization(weatherForecast, currentWeather)
       setOptimization(optimizationData)
     } catch (err) {
       setError('Failed to fetch weather data')
