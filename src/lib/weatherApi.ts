@@ -1,40 +1,59 @@
 export interface WeatherData {
+  temperature: number
   feelsLike: number
+  humidity: number
   condition: string
+  windSpeed: number
   pressure: number
+  visibility: number
   uvIndex: number
+  timestamp: Date
 }
-export interface W
+
+export interface WeatherForecast {
+  date: Date
   tempHigh: number
-  condition: stri
+  tempLow: number
+  condition: string
+  precipitation: number
 }
-e
 
-    energySavings: number
-  windowReco
+export interface WeatherRecommendation {
+  hvacRecommendation: {
+    targetTemp: number
     reason: string
-  deviceScheduleA
-    deviceName: str
+    energySavings: number
+  }
+  windowRecommendation: {
+    action: 'open' | 'close' | 'neutral'
+    reason: string
+  }
+  deviceScheduleAdjustments: Array<{
+    deviceId: string
+    deviceName: string
+    suggestion: string
     estimatedSavings: number
+  }>
 }
 
-export async function getCurrentWeathe
-    const response = aw
-    )
-    if (!response.
-    }
-   
-    return {
-      feelsLike: data.main.feels_like,
-      condition: d
-   
-      uvIndex: data.uvi || 5,
-    }
-    console.error('Fai
+export interface WeatherOptimization {
+  hvacRecommendation: {
+    targetTemp: number
+    reason: string
+    energySavings: number
   }
-
-  tr
- 
+  windowRecommendation: {
+    action: 'open' | 'close' | 'neutral'
+    reason: string
+  }
+  deviceScheduleAdjustments: Array<{
+    deviceId: string
+    deviceName: string
+    suggestion: string
+    estimatedSavings: number
+  }>
+  totalEstimatedSavings: number
+}
 
 const OPENWEATHER_API_KEY = 'YOUR_API_KEY_HERE'
 
@@ -81,209 +100,249 @@ export async function getWeatherForecast(lat: number, lon: number, days: number 
     const dailyForecasts: WeatherForecast[] = []
     const processedDates = new Set<string>()
     
-      targetTemp: 78,
-      energySavings: 8.5
-  } else if (currentTemp < 60) {
+    for (const item of data.list) {
+      const date = new Date(item.dt * 1000)
+      const dateKey = date.toISOString().split('T')[0]
       
-      energySavings: 7.2
-  }
-  if (current.humidity > 70) 
-      targetTem
-      energySavings: 5.0
-  }
-  return {
-    reason: 'Weather conditions are optimal. 
-  }
-
-  cur
-): {
-  const insideTargetTemp 
-  
-    return {
-      reason: 'Outside temperatu
-  }
- 
-
+      if (!processedDates.has(dateKey) && dailyForecasts.length < days) {
+        processedDates.add(dateKey)
+        dailyForecasts.push({
+          date,
+          tempHigh: item.main.temp_max,
+          tempLow: item.main.temp_min,
+          condition: item.weather[0].main,
+          precipitation: item.pop * 100
+        })
+      }
     }
-  current: WeatherData,
-    return {
-      reason: 'Large tem
+    
+    return dailyForecasts
+  } catch (error) {
+    console.error('Failed to fetch forecast data, using mock:', error)
+    return getMockForecastData()
   }
-  const windowRecommendation = getWindowRecommendation(current, forecast)
-    reason: 'Weather conditions are neutral. Adjust windows based on preference.'
 }
-function g
+
+export function getWeatherRecommendations(
+  current: WeatherData,
+  forecast: WeatherForecast[]
+): WeatherRecommendation {
+  const hvacRecommendation = getHVACRecommendation(current, forecast)
+  const windowRecommendation = getWindowRecommendation(current, forecast)
+  const deviceScheduleAdjustments = getDeviceAdjustments(current, forecast)
+  
+  return {
     hvacRecommendation,
-  deviceId: string
-  suggestion: string
-}> 
- 
+    windowRecommendation,
+    deviceScheduleAdjustments
+  }
+}
+
+export function generateWeatherOptimization(
+  current: WeatherData,
+  forecast: WeatherForecast[]
+): WeatherOptimization {
+  const hvacRecommendation = getHVACRecommendation(current, forecast)
+  const windowRecommendation = getWindowRecommendation(current, forecast)
+  const deviceScheduleAdjustments = getDeviceAdjustments(current, forecast)
+  
+  const totalEstimatedSavings = 
+    hvacRecommendation.energySavings + 
+    deviceScheduleAdjustments.reduce((sum, adj) => sum + adj.estimatedSavings, 0)
+  
+  return {
+    hvacRecommendation,
+    windowRecommendation,
+    deviceScheduleAdjustments,
+    totalEstimatedSavings
+  }
+}
+
+export async function getUserLocation(): Promise<{ lat: number; lon: number } | null> {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) {
+      resolve(null)
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
+        })
+      },
+      () => {
+        resolve(null)
+      }
+    )
+  })
+}
 
 function getHVACRecommendation(
-      deviceName: 'Pool
+  current: WeatherData,
   forecast: WeatherForecast[]
 ): { targetTemp: number; reason: string; energySavings: number } {
   const currentTemp = current.temperature
   
-    adjustments.push({
-      device
-      estimatedSaving
-  }
-  if (current.condition 
-    }
-      suggestion: 'Reduce runtim
-    })
-
-}
-function getMockWeatherD
-    }
-   
-  
-    visibility: 10,
+  if (currentTemp > 80) {
     return {
-}
-function getMockForecastData(): WeatherForecast[] {
-  
-    c
-   
-  
-      temp
-      precipitation
+      targetTemp: 78,
+      reason: 'High outdoor temperature. Setting AC to 78°F for optimal efficiency.',
+      energySavings: 8.5
+    }
+  } else if (currentTemp < 60) {
+    return {
+      targetTemp: 68,
+      reason: 'Low outdoor temperature. Setting heat to 68°F for comfort.',
+      energySavings: 7.2
+    }
   }
+  
+  if (current.humidity > 70) {
+    return {
+      targetTemp: 76,
+      reason: 'High humidity detected. Lowering temperature to improve comfort.',
+      energySavings: 5.0
+    }
+  }
+  
+  return {
+    targetTemp: 72,
+    reason: 'Weather conditions are optimal. Maintaining comfortable temperature.',
     energySavings: 3.0
+  }
 }
- 
 
-
-      (position) => {
-          lat: position.coord
-        })
+function getWindowRecommendation(
+  current: WeatherData,
+  forecast: WeatherForecast[]
+): {
+  action: 'open' | 'close' | 'neutral'
+  reason: string
+} {
+  const insideTargetTemp = 72
   const outsideTemp = current.temperature
-      }
   const tempDiff = Math.abs(outsideTemp - insideTargetTemp)
 
   if (tempDiff < 5 && current.humidity < 60) {
-
-
-
-
-
-
-
-
-
-
-    }
-
-
-
     return {
-
-
-
-
-
-
+      action: 'open',
+      reason: 'Outside temperature is ideal. Opening windows can reduce HVAC usage.'
+    }
+  }
+  
+  if (outsideTemp > 85 || outsideTemp < 55) {
+    return {
+      action: 'close',
+      reason: 'Outside temperature is extreme. Keep windows closed for efficiency.'
+    }
+  }
+  
+  if (tempDiff > 10) {
+    return {
+      action: 'close',
+      reason: 'Large temperature difference. Keep windows closed to maintain comfort.'
+    }
+  }
+  
+  return {
     action: 'neutral',
-
+    reason: 'Weather conditions are neutral. Adjust windows based on preference.'
   }
-
-
-
-  current: WeatherData,
-
-): Array<{
-
-  deviceName: string
-
-
-
-  const adjustments: Array<{
-
-
-
-
-
-
-
-    adjustments.push({
-
-
-
-      estimatedSavings: 6.2
-
-  }
-
-
-
-      deviceId: 'water-heater-1',
-
-
-
-
-
-
-
-
-
-
-
-      estimatedSavings: 3.8
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-    pressure: 1013,
-
-    uvIndex: 5,
-
-  }
-
-
-
-
-  
-
-
-
-    
-
-      date,
-
-
-
-
-    })
-
-  
-
 }
 
+function getDeviceAdjustments(
+  current: WeatherData,
+  forecast: WeatherForecast[]
+): Array<{
+  deviceId: string
+  deviceName: string
+  suggestion: string
+  estimatedSavings: number
+}> {
+  const adjustments: Array<{
+    deviceId: string
+    deviceName: string
+    suggestion: string
+    estimatedSavings: number
+  }> = []
+  
+  if (current.temperature > 75 && current.condition === 'Clear') {
+    adjustments.push({
+      deviceId: 'pool-pump-1',
+      deviceName: 'Pool Pump',
+      suggestion: 'Run pool pump during evening hours to reduce peak demand.',
+      estimatedSavings: 6.2
+    })
+  }
+  
+  if (current.condition === 'Rain' || current.condition === 'Snow') {
+    adjustments.push({
+      deviceId: 'water-heater-1',
+      deviceName: 'Water Heater',
+      suggestion: 'Reduce runtime during precipitation to save energy.',
+      estimatedSavings: 3.8
+    })
+  }
+  
+  return adjustments
+}
 
+function getMockWeatherData(): WeatherData {
+  return {
+    temperature: 72,
+    feelsLike: 70,
+    humidity: 55,
+    condition: 'Clear',
+    windSpeed: 5,
+    pressure: 1013,
+    visibility: 10,
+    uvIndex: 5,
+    timestamp: new Date()
+  }
+}
 
+function getMockForecastData(): WeatherForecast[] {
+  const forecasts: WeatherForecast[] = []
+  
+  for (let i = 0; i < 7; i++) {
+    const date = new Date()
+    date.setDate(date.getDate() + i)
+    
+    forecasts.push({
+      date,
+      tempHigh: 75 + Math.random() * 10,
+      tempLow: 55 + Math.random() * 10,
+      condition: ['Clear', 'Cloudy', 'Rain'][Math.floor(Math.random() * 3)],
+      precipitation: Math.random() * 50
+    })
+  }
+  
+  return forecasts
+}
 
+export async function getWeatherByLocation(): Promise<{
+  weather: WeatherData
+  forecast: WeatherForecast[]
+} | null> {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) {
+      resolve(null)
+      return
+    }
 
-
-
-
-      (position) => {
-
-
-
-        })
-
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude
+        const lon = position.coords.longitude
+        const weather = await getCurrentWeather(lat, lon)
+        const forecast = await getWeatherForecast(lat, lon)
+        resolve({ weather, forecast })
+      },
       () => {
-
-
-
+        resolve(null)
+      }
+    )
   })
-
+}
