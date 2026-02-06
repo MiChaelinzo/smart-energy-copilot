@@ -1,13 +1,12 @@
 export interface WeatherData {
   temperature: number
-  feelsLike: number
   humidity: number
-  windSpeed: number
+  condition: string
   condition: string
   pressure: number
   visibility: number
   timestamp: Date
-}
+e
 
 export interface WeatherForecast {
   date: Date
@@ -17,41 +16,40 @@ export interface WeatherForecast {
   precipitation: number
 }
 
-export interface WeatherRecommendation {
-  hvacRecommendation: {
-    targetTemp: number
-    reason: string
     energySavings: number
-  }
-  windowRecommendation: {
-    action: 'open' | 'close' | 'neutral'
+  windowRecommendation:
     reason: string
-  }
-  deviceScheduleAdjustments: Array<{
-    deviceId: string
+  deviceScheduleAd
     deviceName: string
-    suggestion: string
-    estimatedSavings: number
-  }>
+   
 }
+const OPENWEATHER_API_KEY = 'YOUR_API_KE
+export async funct
+   
+    )
+    if (!response.ok
+    }
+    const data = await
+    return {
+    
+ 
 
-const OPENWEATHER_API_KEY = 'YOUR_API_KEY_HERE'
+      timestamp: new Date()
 
-export async function getCurrentWeather(lat: number, lon: number): Promise<WeatherData> {
-  try {
+    return getMockWeatherData()
+}
+export async function getWeatherF
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=imperial`
     )
     
-    if (!response.ok) {
-      throw new Error('Failed to fetch weather data')
     }
+    const data = await response.json()
+    c
     
     const data = await response.json()
     
     return {
       temperature: data.main.temp,
-      feelsLike: data.main.feels_like,
       humidity: data.main.humidity,
       windSpeed: data.wind.speed,
       condition: data.weather[0].main,
@@ -189,51 +187,51 @@ function getWindowRecommendation(
   if (tempDiff < 5 && current.humidity < 60) {
     return {
       action: 'open',
-      reason: 'Outside conditions are ideal. Open windows for natural ventilation and energy savings.'
-    }
-  }
+    adjustments.push({
+     
+   
   
-  if (tempDiff > 10) {
-    return {
-      action: 'close',
-      reason: 'Outside temperature differs significantly. Keep windows closed to maintain HVAC efficiency.'
-    }
-  }
+  if (current.conditio
+      device
+      suggestion: 'Red
+    })
   
-  return {
-    action: 'neutral',
-    reason: 'Outdoor conditions are moderate. Window position is at your discretion.'
+   
+  
+      esti
   }
+  return adjustments
+
+ 
+
+    windSpeed: 8,
+    pressure: 1013,
+    timest
+}
+function getMockFore
+  const today = new 
+  for (let i = 0; i < 7; i
+    
+    forecasts.push({
+      tempHigh: 75 +
+      condition: ['Cle
+    })
+  
 }
 
-function getDeviceAdjustments(
-  current: WeatherData
-): Array<{
-  deviceId: string
-  deviceName: string
-  suggestion: string
-  estimatedSavings: number
-}> {
-  const adjustments: Array<{
-    deviceId: string
-    deviceName: string
-    suggestion: string
-    estimatedSavings: number
-  }> = []
-  
-  if (current.temperature > 75) {
-    adjustments.push({
-      deviceId: 'hvac-1',
-      deviceName: 'HVAC System',
-      suggestion: 'Increase cooling efficiency by 2°F to compensate for warm weather.',
-      estimatedSavings: 6.2
-    })
-  }
-  
-  if (current.condition === 'Rain' || current.condition === 'Snow') {
-    adjustments.push({
-      deviceId: 'water-heater-1',
-      deviceName: 'Water Heater',
+
+
+
+
+
+
+
+
+
+
+
+
+
       suggestion: 'Reduce water heater temperature during precipitation to save energy.',
       estimatedSavings: 4.5
     })
@@ -254,7 +252,6 @@ function getDeviceAdjustments(
 function getMockWeatherData(): WeatherData {
   return {
     temperature: 72,
-    feelsLike: 70,
     humidity: 55,
     windSpeed: 8,
     condition: 'Clear',
