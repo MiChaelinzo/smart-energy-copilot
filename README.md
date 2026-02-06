@@ -9,8 +9,8 @@ A comprehensive web dashboard for monitoring and controlling an AI-powered smart
 ### Team Name: **Energy Innovation Labs**
 
 **Lead Developer & System Architect**: Michael G. Inso (@MiChaelinzo)  
-**AI/ML Engineer**: Michael G. Inso (@MiChaelinzo) & Shubham Mishra (@shubh2294)  
-**Full-Stack Developer**: GitHub Copilot (@Copilot)
+**AI/ML Engineer**: Michael G. Inso (@MiChaelinzo) 
+**Full-Stack Developer**: Michael G. Inso (@MiChaelinzo) & GitHub Copilot (@Copilot)
 
 **Mission**: Democratize energy efficiency through intelligent automation, making sustainable living accessible and affordable for everyone.
 
