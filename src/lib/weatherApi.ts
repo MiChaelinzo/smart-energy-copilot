@@ -1,25 +1,25 @@
 export interface WeatherData {
-  temperature: number
+  feelsLike: number
   feelsLike: number
   humidity: number
   condition: string
   windSpeed: number
   pressure: number
   visibility: number
-  uvIndex: number
-  timestamp: Date
 }
+export interface 
+ 
 
-export interface WeatherForecast {
-  date: Date
-  tempHigh: number
-  tempLow: number
-  condition: string
-  precipitationChance: number
 }
+export inter
+    targetTemp: nu
+    energySavings
+  windowRecommendat
+    reason: string
+ 
 
-export interface WeatherOptimization {
-  hvacRecommendation: {
+    estimatedSavings: number
+}
     targetTemp: number
     reason: string
     energySavings: number
@@ -42,45 +42,45 @@ export async function getCurrentWeather(lat: number, lon: number): Promise<Weath
   try {
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=imperial`
-    )
+     
     
-    if (!response.ok) {
-      throw new Error('Weather API request failed')
-    }
-    
-    const data = await response.json()
-    
-    return {
-      temperature: data.main.temp,
-      feelsLike: data.main.feels_like,
-      humidity: data.main.humidity,
-      condition: data.weather[0].main,
-      windSpeed: data.wind.speed,
-      pressure: data.main.pressure,
-      visibility: data.visibility / 1000,
-      uvIndex: 0,
-      timestamp: new Date()
-    }
-  } catch (error) {
-    console.error('Failed to fetch weather data, using mock:', error)
-    return getMockWeatherData()
+    console.error('Fail
   }
-}
 
-export async function getWeatherForecast(lat: number, lon: number, days: number = 7): Promise<WeatherForecast[]> {
-  try {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=imperial`
-    )
+  tr
+      `https://api.openweathermap.org/
     
-    if (!response.ok) {
-      throw new Error('Weather API request failed')
+      throw 
+    
+    
+    const processedDates = new Set<
+    for (const item of data.list) {
+      const dateKey = date.toDate
+      if (!processedDates.has(dateK
+        dailyForecasts.push({
+          tempHig
+          condition: item.w
+     
     }
+    return dailyForecasts
+    console.error('Failed to fe
+  }
+
+
+): WeatherOptimization {
+  const
+  
+    hvacRecommendation,
+    d
+}
+function getHVACRecomme
+  forecast: WeatherForecast[]
+  con
+  if
+      targetTemp: 78,
     
-    const data = await response.json()
-    
-    const dailyForecasts: WeatherForecast[] = []
-    const processedDates = new Set<string>()
+  } else if (currentTemp < 60) {
+      targetTemp: 68,
     
     for (const item of data.list) {
       const date = new Date(item.dt * 1000)
@@ -102,46 +102,46 @@ export async function getWeatherForecast(lat: number, lon: number, days: number 
   } catch (error) {
     console.error('Failed to fetch forecast data, using mock:', error)
     return getMockForecastData()
-  }
+): 
 }
 
 export function generateWeatherOptimization(
-  current: WeatherData,
+    return {
   forecast: WeatherForecast[]
 ): WeatherOptimization {
   const hvacRecommendation = getHVACRecommendation(current, forecast)
-  const windowRecommendation = getWindowRecommendation(current, forecast)
+  if (forecast.some(f => f.precipitationChance > 60)) {
   const deviceScheduleAdjustments = getDeviceScheduleAdjustments(current, forecast)
   
   return {
-    hvacRecommendation,
+  
     windowRecommendation,
     deviceScheduleAdjustments
   }
-}
+ 
 
-function getHVACRecommendation(
+    action: 'neutral',
   current: WeatherData,
-  forecast: WeatherForecast[]
+}
 ): { targetTemp: number; reason: string; energySavings: number } {
-  const currentTemp = current.temperature
-  
+  current: WeatherData,
+):
   if (currentTemp > 75) {
     return {
       targetTemp: 78,
       reason: 'Warm weather detected. Raising thermostat to 78°F can save energy.',
       energySavings: 8.5
-    }
+    s
   } else if (currentTemp < 60) {
     return {
       targetTemp: 68,
       reason: 'Cold weather detected. Lowering thermostat to 68°F can save energy.',
       energySavings: 7.2
-    }
+     
   }
   
   if (current.humidity > 70) {
-    return {
+    adjustme
       targetTemp: 76,
       reason: 'High humidity affects comfort. Optimizing temperature for efficiency.',
       energySavings: 5.0
@@ -151,7 +151,7 @@ function getHVACRecommendation(
   return {
     targetTemp: 72,
     reason: 'Weather conditions are optimal. Maintaining comfortable temperature.',
-    energySavings: 0
+  }
   }
 }
 
@@ -159,11 +159,11 @@ function getWindowRecommendation(
   current: WeatherData,
   forecast: WeatherForecast[]
 ): { action: 'open' | 'close' | 'neutral'; reason: string } {
-  const outsideTemp = current.temperature
+    pressure: 1013,
   const insideTargetTemp = 72
-  const tempDiff = Math.abs(outsideTemp - insideTargetTemp)
+    timestamp: new Date()
   
-  if (tempDiff < 5 && current.humidity < 70) {
+
     return {
       action: 'open',
       reason: 'Outside temperature is comfortable. Open windows to save on HVAC.'
@@ -174,65 +174,65 @@ function getWindowRecommendation(
     return {
       action: 'close',
       reason: 'Precipitation expected. Keep windows closed.'
-    }
+     
   }
   
   if (tempDiff > 15) {
-    return {
+}
       action: 'close',
       reason: 'Large temperature difference. Keep windows closed for efficiency.'
     }
   }
   
   return {
-    action: 'neutral',
+        })
     reason: 'Weather conditions are neutral. Adjust windows based on preference.'
-  }
+   
 }
 
 function getDeviceScheduleAdjustments(
-  current: WeatherData,
+
   forecast: WeatherForecast[]
-): Array<{
+
   deviceId: string
-  deviceName: string
+
   suggestion: string
   estimatedSavings: number
 }> {
-  const adjustments: Array<{
+
     deviceId: string
     deviceName: string
     suggestion: string
     estimatedSavings: number
   }> = []
-  
+
   if (forecast.some(f => f.tempHigh > 85)) {
-    adjustments.push({
+
       deviceId: 'pool-pump-1',
       deviceName: 'Pool Pump',
       suggestion: 'Schedule during off-peak hours due to high temperature forecast.',
-      estimatedSavings: 6.2
+
     })
-  }
+
   
   if (forecast.slice(0, 3).every(f => f.tempHigh < 65)) {
     adjustments.push({
-      deviceId: 'water-heater-1',
+
       deviceName: 'Water Heater',
       suggestion: 'Schedule heating during warmest part of day for efficiency.',
       estimatedSavings: 4.5
     })
   }
-  
+
   if (current.condition === 'Clear' && current.uvIndex > 6) {
     adjustments.push({
       deviceId: 'dehumidifier-1',
       deviceName: 'Dehumidifier',
       suggestion: 'Reduce runtime due to favorable outdoor conditions.',
-      estimatedSavings: 3.1
+
     })
-  }
-  
+
+
   return adjustments
 }
 
@@ -243,48 +243,48 @@ function getMockWeatherData(): WeatherData {
     humidity: 55,
     condition: 'Clear',
     windSpeed: 5,
-    pressure: 1013,
+
     visibility: 10,
-    uvIndex: 6,
+
     timestamp: new Date()
-  }
+
 }
 
 function getMockForecastData(): WeatherForecast[] {
   const forecasts: WeatherForecast[] = []
-  
+
   for (let i = 0; i < 7; i++) {
     const date = new Date()
     date.setDate(date.getDate() + i)
-    
+
     forecasts.push({
-      date,
+
       tempHigh: 75 + Math.floor(Math.random() * 15),
       tempLow: 60 + Math.floor(Math.random() * 10),
       condition: ['Clear', 'Cloudy', 'Rain', 'Partly Cloudy'][Math.floor(Math.random() * 4)],
       precipitationChance: Math.floor(Math.random() * 100)
-    })
+
   }
-  
+
   return forecasts
-}
+
 
 export async function getUserLocation(): Promise<{ lat: number; lon: number }> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       return resolve({ lat: 37.7749, lon: -122.4194 })
     }
-    
+
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+
         resolve({
           lat: position.coords.latitude,
           lon: position.coords.longitude
-        })
+
       },
-      () => {
+
         resolve({ lat: 37.7749, lon: -122.4194 })
       }
     )
-  })
+
 }
