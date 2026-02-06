@@ -19,10 +19,10 @@ import {
   WeatherData, 
   WeatherForecast, 
   WeatherOptimizationRecommendation,
-  getCurrentWeather,
-  getWeatherForecast,
+  fetchCurrentWeather,
+  fetchWeatherForecast,
   generateWeatherOptimization,
-  getWeatherWithLocation
+  getUserLocation
 } from '@/lib/weatherApi'
 import { formatCurrency } from '@/lib/utils'
 
@@ -38,19 +38,21 @@ export function WeatherOptimizationPanel() {
     setError(null)
     
     try {
-      const locationData = await getWeatherWithLocation()
+      const locationData = await getUserLocation()
       
       if (!locationData) {
         setError('Location access denied. Using mock data.')
         return
       }
       
-      const { weather: currentWeather, forecast: weatherForecast } = locationData
+      const { lat, lon, weather: currentWeather } = locationData
+      
+      const weatherForecast = await fetchWeatherForecast(lat, lon)
       
       setWeather(currentWeather)
       setForecast(weatherForecast)
       
-      const optimizationData = generateWeatherOptimization(weatherForecast, currentWeather)
+      const optimizationData = generateWeatherOptimization(currentWeather)
       setOptimization(optimizationData)
     } catch (err) {
       setError('Failed to fetch weather data')
