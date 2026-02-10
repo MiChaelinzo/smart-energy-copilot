@@ -321,7 +321,7 @@ export const MOCK_MAINTENANCE_ALERTS: MaintenanceAlert[] = [
     title: 'Filter Replacement Due Soon',
     description: 'HVAC runtime has increased by 18% while maintaining same temperature, indicating restricted airflow.',
     prediction: 'Filter replacement typically needed every 90 days. Current filter at 85 days of use.',
-    recommendation: 'Replace air filter within next week. Estimated cost: $25. Potential monthly savings: $15-20.',
+    recommendation: 'Replace air filter within next week. Estimated cost: ¥25. Potential monthly savings: ¥15-20.',
     estimatedDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     confidence: 92,
     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
@@ -416,7 +416,7 @@ export const MOCK_ACHIEVEMENTS: Achievement[] = [
   {
     id: 'ach-006',
     title: 'Cost Cutter',
-    description: 'Saved over $50 on energy bills this month',
+    description: 'Saved over ¥50 on energy bills this month',
     icon: 'CurrencyDollar',
     category: 'savings',
     tier: 'gold',

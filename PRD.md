@@ -183,7 +183,7 @@ This requires multiple interconnected features including real-time monitoring, d
 The design should evoke a sense of technological sophistication and environmental consciousness - feeling like a premium, cutting-edge energy management command center. It should balance data density with clarity, using intelligent visualization to make complex information digestible. The aesthetic should feel clean, modern, and subtly futuristic, with energy and efficiency themes woven throughout.
 
 ## Color Selection
-A vibrant teal and electric blue palette representing clean energy and technology, balanced with warm accents for alerts and achievements.
+A vibrant teal and electric blue palette representing clean energy and technology, balanced with warm accents for alerts and achievements. Currency displayed in Chinese Yuan (¥) for Tuya Inc. submission.
 
 - **Primary Color**: Deep Teal `oklch(0.55 0.12 195)` - Represents clean energy, sustainability, and technological reliability
 - **Secondary Colors**: 

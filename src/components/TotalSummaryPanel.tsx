@@ -228,7 +228,7 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
             <div className="flex-1">
               <p className="text-sm text-muted-foreground mb-1">Monthly Cost</p>
               <p className="text-4xl font-bold text-success mb-1">
-                ${summary.cost.monthly.toFixed(2)}
+                ¥{summary.cost.monthly.toFixed(2)}
               </p>
               <p className="text-sm text-muted-foreground">Projected</p>
             </div>
@@ -239,7 +239,7 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
           <div className="mt-4 pt-4 border-t border-success/20">
             <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">Daily Rate</span>
-              <span className="font-medium">${summary.cost.daily.toFixed(2)}/day</span>
+              <span className="font-medium">¥{summary.cost.daily.toFixed(2)}/day</span>
             </div>
           </div>
         </Card>
@@ -249,7 +249,7 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
             <div className="flex-1">
               <p className="text-sm text-muted-foreground mb-1">Monthly Savings</p>
               <p className="text-4xl font-bold text-accent mb-1">
-                ${summary.cost.savings.toFixed(2)}
+                ¥{summary.cost.savings.toFixed(2)}
               </p>
               <p className="text-sm text-muted-foreground">
                 {summary.cost.savingsPercentage.toFixed(1)}% reduction
@@ -262,7 +262,7 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
           <div className="mt-4 pt-4 border-t border-accent/20">
             <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">Yearly Projected</span>
-              <span className="font-medium">${summary.cost.yearly.toFixed(2)}</span>
+              <span className="font-medium">¥{summary.cost.yearly.toFixed(2)}</span>
             </div>
           </div>
         </Card>
@@ -309,7 +309,7 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
                       {device.power.toFixed(0)}W
                     </span>
                     <span className="text-sm font-medium min-w-[60px] text-right">
-                      ${device.dailyCost.toFixed(2)}/day
+                      ¥{device.dailyCost.toFixed(2)}/day
                     </span>
                   </div>
                 </div>
@@ -348,7 +348,7 @@ export function TotalSummaryPanel({ devices, goals = [] }: TotalSummaryPanelProp
                       {(room.power / 1000).toFixed(2)}kW
                     </span>
                     <span className="text-sm font-medium min-w-[60px] text-right">
-                      ${room.cost.toFixed(2)}/day
+                      ¥{room.cost.toFixed(2)}/day
                     </span>
                   </div>
                 </div>

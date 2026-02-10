@@ -47,7 +47,7 @@ export function EnergyReports({ devices, goals }: EnergyReportsProps) {
     const achievedGoals = goals.filter(g => g.achieved || (g.current / g.target) >= 1)
 
     const recommendations = [
-      'Schedule your water heater to run during off-peak hours (9PM-8AM) to save ~$15/month',
+      'Schedule your water heater to run during off-peak hours (9PM-8AM) to save ~¥15/month',
       'Your HVAC is the highest energy consumer. Consider setting it 2°F higher in summer',
       'Reduce phantom power by using smart outlets for entertainment systems',
       daysPassed > 15 && savingsPercent > 10 
@@ -59,7 +59,7 @@ export function EnergyReports({ devices, goals }: EnergyReportsProps) {
       achievedGoals.length > 0 && `Achieved ${achievedGoals.length} energy goal${achievedGoals.length > 1 ? 's' : ''}`,
       savingsPercent > 15 && 'Energy Champion: 15%+ reduction this month',
       devices.filter(d => d.status === 'online').length === devices.length && 'All devices online and monitored',
-      monthlyCost < 150 && 'Budget Master: Kept monthly cost under $150',
+      monthlyCost < 150 && 'Budget Master: Kept monthly cost under ¥150',
     ].filter(Boolean)
 
     return {
@@ -93,15 +93,15 @@ Generated: ${new Date().toLocaleString()}
 SUMMARY
 Total Consumption: ${reportData.totalConsumption.toFixed(1)} kWh
 Projected Monthly: ${reportData.projectedMonthly.toFixed(1)} kWh
-Total Cost: $${reportData.totalCost.toFixed(2)}
-Projected Cost: $${reportData.projectedCost.toFixed(2)}
+Total Cost: ¥${reportData.totalCost.toFixed(2)}
+Projected Cost: ¥${reportData.projectedCost.toFixed(2)}
 Savings vs Last Month: ${reportData.savingsPercent.toFixed(1)}% (${reportData.savings.toFixed(1)} kWh)
 Carbon Reduction: ${reportData.carbonReduction.toFixed(1)} kg CO₂
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 TOP ENERGY CONSUMERS
-${reportData.topDevices.map((d, i) => `${i + 1}. ${d.name}: ${d.consumption} kWh ($${d.cost})`).join('\n')}
+${reportData.topDevices.map((d, i) => `${i + 1}. ${d.name}: ${d.consumption} kWh (¥${d.cost})`).join('\n')}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -173,12 +173,12 @@ AI-Powered Energy Management
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Current Cost</p>
-              <p className="text-2xl font-bold">${reportData.totalCost.toFixed(2)}</p>
+              <p className="text-2xl font-bold">¥{reportData.totalCost.toFixed(2)}</p>
               <p className="text-xs text-muted-foreground">this month</p>
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Projected Cost</p>
-              <p className="text-2xl font-bold">${reportData.projectedCost.toFixed(2)}</p>
+              <p className="text-2xl font-bold">¥{reportData.projectedCost.toFixed(2)}</p>
               <p className="text-xs text-muted-foreground">monthly</p>
             </div>
           </div>
@@ -246,7 +246,7 @@ AI-Powered Energy Management
                       <p className="text-sm text-muted-foreground">{device.consumption} kWh</p>
                     </div>
                   </div>
-                  <p className="font-semibold">${device.cost}</p>
+                  <p className="font-semibold">¥{device.cost}</p>
                 </div>
               ))}
             </div>

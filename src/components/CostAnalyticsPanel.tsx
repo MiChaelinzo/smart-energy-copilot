@@ -79,7 +79,7 @@ export function CostAnalyticsPanel({ devices }: CostAnalyticsPanelProps) {
           <CardHeader className="pb-3">
             <CardDescription>Current Cost</CardDescription>
             <CardTitle className="text-3xl font-bold">
-              ${costData.currentCostPerHour.toFixed(2)}/hr
+              ¥{costData.currentCostPerHour.toFixed(2)}/hr
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -93,7 +93,7 @@ export function CostAnalyticsPanel({ devices }: CostAnalyticsPanelProps) {
           <CardHeader className="pb-3">
             <CardDescription>Estimated Daily Cost</CardDescription>
             <CardTitle className="text-3xl font-bold">
-              ${costData.estimatedDailyCost.toFixed(2)}
+              ¥{costData.estimatedDailyCost.toFixed(2)}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -107,7 +107,7 @@ export function CostAnalyticsPanel({ devices }: CostAnalyticsPanelProps) {
           <CardHeader className="pb-3">
             <CardDescription>Projected Monthly</CardDescription>
             <CardTitle className="text-3xl font-bold">
-              ${costData.estimatedMonthlyCost.toFixed(2)}
+              ¥{costData.estimatedMonthlyCost.toFixed(2)}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -151,7 +151,7 @@ export function CostAnalyticsPanel({ devices }: CostAnalyticsPanelProps) {
                       <Badge variant="outline" className="text-xs px-1.5 py-0">ON</Badge>
                     )}
                   </div>
-                  <span className="font-semibold">${device.cost.toFixed(2)}/day</span>
+                  <span className="font-semibold">¥{device.cost.toFixed(2)}/day</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Progress value={device.percentage} className="h-1.5 flex-1" />
@@ -185,11 +185,11 @@ export function CostAnalyticsPanel({ devices }: CostAnalyticsPanelProps) {
                   <div>
                     <p className="font-medium">{period.period}</p>
                     <p className="text-sm text-muted-foreground">
-                      ${period.rate}/kWh · {period.hours} hours
+                      ¥{period.rate}/kWh · {period.hours} hours
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold">${period.cost.toFixed(2)}</p>
+                    <p className="font-bold">¥{period.cost.toFixed(2)}</p>
                     <p className="text-xs text-muted-foreground">daily</p>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export function CostAnalyticsPanel({ devices }: CostAnalyticsPanelProps) {
               <div className="flex items-center justify-between">
                 <p className="font-semibold">Total Daily Cost</p>
                 <p className="text-xl font-bold text-primary">
-                  ${costData.timeOfUseCosts.reduce((sum, p) => sum + p.cost, 0).toFixed(2)}
+                  ¥{costData.timeOfUseCosts.reduce((sum, p) => sum + p.cost, 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -222,7 +222,7 @@ export function CostAnalyticsPanel({ devices }: CostAnalyticsPanelProps) {
               <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2" />
               <div>
                 <p className="font-medium">Shift water heater usage to off-peak hours</p>
-                <p className="text-sm text-muted-foreground">Save ~$15/month by heating during 9PM-8AM</p>
+                <p className="text-sm text-muted-foreground">Save ~¥15/month by heating during 9PM-8AM</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -236,7 +236,7 @@ export function CostAnalyticsPanel({ devices }: CostAnalyticsPanelProps) {
               <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2" />
               <div>
                 <p className="font-medium">Turn off idle appliances</p>
-                <p className="text-sm text-muted-foreground">Phantom loads can add $10-20 to monthly bills</p>
+                <p className="text-sm text-muted-foreground">Phantom loads can add ¥10-20 to monthly bills</p>
               </div>
             </li>
           </ul>

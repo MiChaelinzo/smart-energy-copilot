@@ -79,11 +79,11 @@ export function Dashboard({ devices, onNavigate }: DashboardProps) {
 
         <MetricCard
           title="Monthly Cost"
-          value={`$${metrics.monthlyCost.toFixed(2)}`}
+          value={`¥${metrics.monthlyCost.toFixed(2)}`}
           subtitle="Projected estimate"
           icon={CurrencyDollar}
           trend="down"
-          trendValue="$24 saved"
+          trendValue="¥24 saved"
           color="success"
         />
 
