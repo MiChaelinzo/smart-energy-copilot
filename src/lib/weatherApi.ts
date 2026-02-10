@@ -32,6 +32,8 @@ export interface WeatherOptimizationRecommendation {
     deviceName: string
     adjustment: string
     reason: string
+    suggestion: string
+    estimatedSavings: number
   }>
 }
 
@@ -225,15 +227,17 @@ function getWindowRecommendation(
 
 function getDeviceAdjustments(
   current: WeatherData
-): Array<{ deviceId: string; deviceName: string; adjustment: string; reason: string }> {
-  const adjustments = []
+): Array<{ deviceId: string; deviceName: string; adjustment: string; reason: string; suggestion: string; estimatedSavings: number }> {
+  const adjustments: Array<{ deviceId: string; deviceName: string; adjustment: string; reason: string; suggestion: string; estimatedSavings: number }> = []
   
   if (current.condition === 'Clear' || current.condition === 'Partly Cloudy') {
     adjustments.push({
       deviceId: 'lighting-system',
       deviceName: 'Indoor Lighting',
       adjustment: 'Reduce brightness by 30%',
-      reason: 'Good natural light conditions detected'
+      reason: 'Good natural light conditions detected',
+      suggestion: 'Reduce brightness by 30% to take advantage of natural light',
+      estimatedSavings: 8.5
     })
   }
   
@@ -242,7 +246,9 @@ function getDeviceAdjustments(
       deviceId: 'water-heater',
       deviceName: 'Water Heater',
       adjustment: 'Increase temperature by 5°F',
-      reason: 'Cold weather requires warmer water for comfort'
+      reason: 'Cold weather requires warmer water for comfort',
+      suggestion: 'Increase temperature by 5°F for optimal comfort in cold weather',
+      estimatedSavings: 0
     })
   }
   
@@ -251,7 +257,9 @@ function getDeviceAdjustments(
       deviceId: 'hvac-system',
       deviceName: 'HVAC System',
       adjustment: 'Adjust fan speed to compensate for drafts',
-      reason: 'High wind speeds may affect indoor temperature'
+      reason: 'High wind speeds may affect indoor temperature',
+      suggestion: 'Adjust fan speed to compensate for drafts from high winds',
+      estimatedSavings: 12.3
     })
   }
   

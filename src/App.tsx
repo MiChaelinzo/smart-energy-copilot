@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Toaster } from '@/components/ui/sonner'
 import { Dashboard } from '@/components/Dashboard'
 import { DevicesPanel } from '@/components/DevicesPanel'
 import { AnalyticsPanel } from '@/components/AnalyticsPanel'
@@ -351,6 +352,7 @@ function App() {
 
   return (
     <>
+      <Toaster />
       <DynamicBackground />
       <EnergyPulse />
       <FloatingEnergyParticles />
