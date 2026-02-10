@@ -32,8 +32,6 @@ export interface WeatherOptimizationRecommendation {
     deviceName: string
     adjustment: string
     reason: string
-    suggestion: string
-    estimatedSavings: number
   }>
 }
 
@@ -227,17 +225,15 @@ function getWindowRecommendation(
 
 function getDeviceAdjustments(
   current: WeatherData
-): Array<{ deviceId: string; deviceName: string; adjustment: string; reason: string; suggestion: string; estimatedSavings: number }> {
-  const adjustments: Array<{ deviceId: string; deviceName: string; adjustment: string; reason: string; suggestion: string; estimatedSavings: number }> = []
+): Array<{ deviceId: string; deviceName: string; adjustment: string; reason: string }> {
+  const adjustments = []
   
   if (current.condition === 'Clear' || current.condition === 'Partly Cloudy') {
     adjustments.push({
       deviceId: 'lighting-system',
       deviceName: 'Indoor Lighting',
       adjustment: 'Reduce brightness by 30%',
-      reason: 'Good natural light conditions detected',
-      suggestion: 'Reduce indoor lighting brightness by 30% to take advantage of natural light',
-      estimatedSavings: 12.5
+      reason: 'Good natural light conditions detected'
     })
   }
   
@@ -246,9 +242,7 @@ function getDeviceAdjustments(
       deviceId: 'water-heater',
       deviceName: 'Water Heater',
       adjustment: 'Increase temperature by 5°F',
-      reason: 'Cold weather requires warmer water for comfort',
-      suggestion: 'Increase water heater temperature by 5°F for better comfort in cold weather',
-      estimatedSavings: -3.2
+      reason: 'Cold weather requires warmer water for comfort'
     })
   }
   
@@ -257,9 +251,7 @@ function getDeviceAdjustments(
       deviceId: 'hvac-system',
       deviceName: 'HVAC System',
       adjustment: 'Adjust fan speed to compensate for drafts',
-      reason: 'High wind speeds may affect indoor temperature',
-      suggestion: 'Adjust HVAC fan speed to maintain consistent temperature despite high winds',
-      estimatedSavings: 5.8
+      reason: 'High wind speeds may affect indoor temperature'
     })
   }
   
