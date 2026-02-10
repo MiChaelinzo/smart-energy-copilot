@@ -24,7 +24,9 @@ import {
   Wrench,
   Trophy,
   FileText,
-  Gear
+  Gear,
+  Sparkle,
+  ChartLineUp
 } from '@phosphor-icons/react'
 
 interface TabFilterProps {
@@ -42,6 +44,8 @@ interface TabConfig {
 const TAB_CONFIGS: TabConfig[] = [
   { id: 'summary', label: 'Summary', icon: <Stack className="w-4 h-4" />, category: 'Overview' },
   { id: 'dashboard', label: 'Dashboard', icon: <ChartBar className="w-4 h-4" />, category: 'Overview' },
+  { id: 'insights', label: 'Insights', icon: <Sparkle className="w-4 h-4" />, category: 'Insights' },
+  { id: 'calculator', label: 'Calculator', icon: <ChartLineUp className="w-4 h-4" />, category: 'Financial' },
   { id: 'devices', label: 'Devices', icon: <DevicesIcon className="w-4 h-4" />, category: 'Control' },
   { id: 'scenes', label: 'Scenes', icon: <Lightbulb className="w-4 h-4" />, category: 'Control' },
   { id: 'tuya', label: 'Tuya Devices', icon: <Plug className="w-4 h-4" />, category: 'Control' },

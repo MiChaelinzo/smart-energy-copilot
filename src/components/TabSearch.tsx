@@ -18,7 +18,9 @@ import {
   Wrench,
   Trophy,
   FileText,
-  Gear
+  Gear,
+  Sparkle,
+  ChartLineUp
 } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card } from '@/components/ui/card'
@@ -50,6 +52,20 @@ const TABS: Tab[] = [
     icon: <ChartBar className="w-4 h-4" />,
     keywords: ['overview', 'stats', 'metrics', 'monitor', 'view'],
     category: 'Overview'
+  },
+  { 
+    id: 'insights', 
+    label: 'Insights', 
+    icon: <Sparkle className="w-4 h-4" />,
+    keywords: ['recommendations', 'tips', 'suggestions', 'optimize', 'smart', 'ai', 'opportunities'],
+    category: 'Insights'
+  },
+  { 
+    id: 'calculator', 
+    label: 'Savings Calculator', 
+    icon: <ChartLineUp className="w-4 h-4" />,
+    keywords: ['calculator', 'savings', 'roi', 'projections', 'estimate', 'forecast'],
+    category: 'Financial'
   },
   { 
     id: 'devices', 

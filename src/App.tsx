@@ -34,6 +34,9 @@ import { LightningEffect } from '@/components/LightningEffect'
 import { FloatingEnergyParticles } from '@/components/FloatingEnergyParticles'
 import { WeatherOptimizationPanel } from '@/components/WeatherOptimizationPanel'
 import { UserManagementPanel } from '@/components/UserManagementPanel'
+import { EnergyInsightsHub } from '@/components/EnergyInsightsHub'
+import { SavingsCalculator } from '@/components/SavingsCalculator'
+import { EnhancedDashboard } from '@/components/EnhancedDashboard'
 import { 
   MOCK_DEVICES, 
   MOCK_SCENES, 
@@ -66,7 +69,9 @@ import {
   Stack,
   Gear,
   Cloud,
-  Users
+  Users,
+  Sparkle,
+  ChartLineUp
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
@@ -287,6 +292,10 @@ function App() {
     toast.success('Adaptive schedule deleted')
   }
 
+  const handleApplyRecommendation = (insightId: string) => {
+    toast.success('Recommendation applied successfully')
+  }
+
   const tuyaDevices = (devices || []).filter((d): d is TuyaDevice => 'tuyaId' in d)
 
 
@@ -435,6 +444,28 @@ function App() {
                 >
                   <ChartBar className="w-4 h-4" />
                   Dashboard
+                </button>
+                <button
+                  onClick={() => setActiveTab('insights')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
+                    activeTab === 'insights'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <Sparkle className="w-4 h-4" />
+                  Insights
+                </button>
+                <button
+                  onClick={() => setActiveTab('calculator')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
+                    activeTab === 'calculator'
+                      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 shimmer'
+                      : 'bg-card hover:bg-accent text-card-foreground hover:text-accent-foreground'
+                  }`}
+                >
+                  <ChartLineUp className="w-4 h-4" />
+                  Calculator
                 </button>
                 <button
                   onClick={() => setActiveTab('devices')}
@@ -623,7 +654,19 @@ function App() {
             </TabsContent>
 
             <TabsContent value="dashboard" className="space-y-6">
-              <Dashboard devices={devices || MOCK_DEVICES} onNavigate={setActiveTab} />
+              <EnhancedDashboard devices={devices || MOCK_DEVICES} onNavigate={setActiveTab} />
+            </TabsContent>
+
+            <TabsContent value="insights" className="space-y-6">
+              <EnergyInsightsHub 
+                devices={devices || MOCK_DEVICES}
+                onApplyRecommendation={handleApplyRecommendation}
+                onNavigate={setActiveTab}
+              />
+            </TabsContent>
+
+            <TabsContent value="calculator" className="space-y-6">
+              <SavingsCalculator devices={devices || MOCK_DEVICES} />
             </TabsContent>
 
             <TabsContent value="devices" className="space-y-6">

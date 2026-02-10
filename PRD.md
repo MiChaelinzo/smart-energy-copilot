@@ -145,6 +145,27 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Progression**: System analyzes patterns → Generates predictions → Displays forecasts → Alerts on anomalies → User takes preventive action
 - **Success criteria**: Predictions align with actual usage trends, anomalies are highlighted clearly, weather integration affects recommendations
 
+### Energy Insights Hub
+- **Functionality**: Real-time intelligent insights showing savings opportunities, efficiency tips, peak usage patterns, and actionable recommendations with one-click automation
+- **Purpose**: Surfaces the most valuable information proactively without requiring users to navigate multiple screens
+- **Trigger**: Automatically generated on dashboard load, updates when usage patterns change
+- **Progression**: System analyzes current state → Identifies opportunities → Displays ranked insights → User reviews → Applies recommendations with one click
+- **Success criteria**: Insights are relevant and timely, recommendations save energy/money, one-click actions work reliably, insights refresh appropriately
+
+### Savings Calculator & Projections
+- **Functionality**: Interactive calculator showing potential savings from schedule changes, device upgrades, behavior modifications with before/after comparisons and ROI calculations
+- **Purpose**: Helps users quantify the financial impact of energy-saving decisions before implementing them
+- **Trigger**: User navigates to savings calculator or clicks "See Potential Savings" from insights
+- **Progression**: Select scenario → Configure parameters → View projections → Compare alternatives → See ROI timeline → Apply recommendations
+- **Success criteria**: Calculations are accurate, scenarios are realistic, comparisons clear, ROI timelines helpful for decision-making
+
+### Enhanced Mobile Dashboard
+- **Functionality**: Mobile-optimized dashboard with swipeable metric cards, quick device toggles, gesture controls, and streamlined navigation
+- **Purpose**: Provides excellent mobile UX for on-the-go energy management with thumb-friendly controls
+- **Trigger**: Automatically detected on mobile viewports
+- **Progression**: Open app → See key metrics immediately → Swipe between cards → Quick toggle devices → Access full features via bottom nav
+- **Success criteria**: Fast loading, smooth gestures, all features accessible, thumb-reachable controls, readable on small screens
+
 ## Edge Case Handling
 - **No Devices Connected**: Display onboarding state with setup instructions and example data to demonstrate features
 - **Offline Mode**: Show last known data with clear indicators that real-time updates are unavailable, queue commands for reconnection
