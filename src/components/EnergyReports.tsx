@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { FileText, Download, TrendUp, Lightning, CurrencyDollar, Leaf, Trophy, Sparkle, FilePdf } from '@phosphor-icons/react'
+import { FileText, TrendUp, Lightning, Leaf, Trophy, Sparkle, FilePdf } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { jsPDF } from 'jspdf'
 
@@ -54,14 +54,14 @@ export function EnergyReports({ devices, goals }: EnergyReportsProps) {
       daysPassed > 15 && savingsPercent > 10 
         ? `Great job! You're on track to save ${savingsPercent.toFixed(0)}% this month`
         : 'Enable more automation scenes to optimize energy usage',
-    ]
+    ].filter(Boolean) as string[]
 
     const achievements = [
       achievedGoals.length > 0 && `Achieved ${achievedGoals.length} energy goal${achievedGoals.length > 1 ? 's' : ''}`,
       savingsPercent > 15 && 'Energy Champion: 15%+ reduction this month',
       devices.filter(d => d.status === 'online').length === devices.length && 'All devices online and monitored',
       monthlyCost < 150 && 'Budget Master: Kept monthly cost under ¥150',
-    ].filter(Boolean)
+    ].filter(Boolean) as string[]
 
     return {
       period: `${startOfMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} (${daysPassed} of ${daysInMonth} days)`,
@@ -130,13 +130,13 @@ AI-Powered Energy Management
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 
-    toast.success('TXT report downloaded successfully', {
+    toast.success('Text report downloaded successfully', {
       description: 'Your energy report has been saved'
     })
   }
 
   const handleDownloadPdfReport = () => {
-    const doc = new jsPDF()
+    const doc = new jsPDF() // Initialize jsPDF
     const pageWidth = doc.internal.pageSize.getWidth()
     const pageHeight = doc.internal.pageSize.getHeight()
     const margin = 20
@@ -288,11 +288,11 @@ AI-Powered Energy Management
           <p className="text-muted-foreground">Comprehensive analysis of your energy usage</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={handleDownloadTxtReport} variant="outline" className="gap-2">
+          <Button onClick={handleDownloadTxtReport} variant="outline" size="sm" className="gap-2">
             <FileText className="w-4 h-4" />
             TXT
           </Button>
-          <Button onClick={handleDownloadPdfReport} className="gap-2">
+          <Button onClick={handleDownloadPdfReport} size="sm" className="gap-2">
             <FilePdf className="w-4 h-4" />
             PDF
           </Button>
