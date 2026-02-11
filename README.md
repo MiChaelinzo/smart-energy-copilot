@@ -2,6 +2,10 @@
 
 A comprehensive web dashboard for monitoring and controlling an AI-powered smart energy management system with **real Tuya Cloud API integration**, **weather-based optimization**, **multi-user role management**, AI adaptive scheduling, voice control, real-time pricing optimization, predictive maintenance, and shareable achievements.
 
+**Watch the DEMO video** 👇🏻⏬⏯️
+
+[![Watch the DEMO video](https://img.youtube.com/vi/4MyrT8RVujY/maxresdefault.jpg)](https://www.youtube.com/watch?v=4MyrT8RVujY)
+
 ---
 
 ## 👥 Project Team
