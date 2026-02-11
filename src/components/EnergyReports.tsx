@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { FileText, Download, TrendUp, Lightning, CurrencyDollar, Leaf, Trophy, Sparkle } from '@phosphor-icons/react'
+import { FileText, Download, TrendUp, Lightning, CurrencyDollar, Leaf, Trophy, Sparkle, FilePdf } from '@phosphor-icons/react'
 import { toast } from 'sonner'
+import { jsPDF } from 'jspdf'
 
 interface EnergyReportsProps {
   devices: Device[]
@@ -82,7 +83,7 @@ export function EnergyReports({ devices, goals }: EnergyReportsProps) {
     }
   }, [devices, goals])
 
-  const handleDownloadReport = () => {
+  const handleDownloadTxtReport = () => {
     const reportText = `
 ENERGY REPORT
 ${reportData.period}
@@ -129,8 +130,153 @@ AI-Powered Energy Management
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 
-    toast.success('Report downloaded successfully', {
+    toast.success('TXT report downloaded successfully', {
       description: 'Your energy report has been saved'
+    })
+  }
+
+  const handleDownloadPdfReport = () => {
+    const doc = new jsPDF()
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const pageHeight = doc.internal.pageSize.getHeight()
+    const margin = 20
+    let yPos = margin
+
+    doc.setFillColor(15, 25, 35)
+    doc.rect(0, 0, pageWidth, 45, 'F')
+    
+    doc.setTextColor(114, 200, 200)
+    doc.setFontSize(24)
+    doc.setFont('helvetica', 'bold')
+    doc.text('ENERGY REPORT', margin, yPos + 15)
+    
+    doc.setTextColor(150, 150, 150)
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.text(reportData.period, margin, yPos + 25)
+    doc.text(`Generated: ${new Date().toLocaleString()}`, margin, yPos + 32)
+
+    yPos = 60
+
+    doc.setFillColor(240, 240, 240)
+    doc.roundedRect(margin, yPos, pageWidth - 2 * margin, 50, 3, 3, 'F')
+    
+    doc.setTextColor(50, 50, 50)
+    doc.setFontSize(14)
+    doc.setFont('helvetica', 'bold')
+    doc.text('SUMMARY', margin + 5, yPos + 12)
+    
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`Total Consumption: ${reportData.totalConsumption.toFixed(1)} kWh`, margin + 5, yPos + 22)
+    doc.text(`Projected Monthly: ${reportData.projectedMonthly.toFixed(1)} kWh`, margin + 5, yPos + 29)
+    doc.text(`Total Cost: ¥${reportData.totalCost.toFixed(2)}`, margin + 5, yPos + 36)
+    doc.text(`Projected Cost: ¥${reportData.projectedCost.toFixed(2)}`, margin + 5, yPos + 43)
+
+    yPos += 60
+
+    doc.setFillColor(200, 255, 220)
+    doc.roundedRect(margin, yPos, (pageWidth - 3 * margin) / 2, 30, 3, 3, 'F')
+    doc.setTextColor(40, 120, 40)
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Savings', margin + 5, yPos + 10)
+    doc.setFontSize(18)
+    doc.text(`${reportData.savingsPercent.toFixed(1)}%`, margin + 5, yPos + 20)
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`${reportData.savings.toFixed(1)} kWh saved`, margin + 5, yPos + 26)
+
+    doc.setFillColor(220, 240, 255)
+    doc.roundedRect(margin + (pageWidth - 3 * margin) / 2 + 5, yPos, (pageWidth - 3 * margin) / 2, 30, 3, 3, 'F')
+    doc.setTextColor(30, 90, 150)
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Carbon Reduced', margin + (pageWidth - 3 * margin) / 2 + 10, yPos + 10)
+    doc.setFontSize(18)
+    doc.text(`${reportData.carbonReduction.toFixed(0)} kg`, margin + (pageWidth - 3 * margin) / 2 + 10, yPos + 20)
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'normal')
+    doc.text('CO₂ emissions', margin + (pageWidth - 3 * margin) / 2 + 10, yPos + 26)
+
+    yPos += 40
+
+    doc.setTextColor(50, 50, 50)
+    doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.text('TOP ENERGY CONSUMERS', margin, yPos)
+    
+    yPos += 8
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    reportData.topDevices.forEach((device, index) => {
+      doc.text(`${index + 1}. ${device.name}`, margin + 5, yPos)
+      doc.text(`${device.consumption} kWh`, pageWidth / 2, yPos)
+      doc.text(`¥${device.cost}`, pageWidth - margin - 30, yPos)
+      yPos += 6
+    })
+
+    yPos += 5
+
+    if (yPos > pageHeight - 80) {
+      doc.addPage()
+      yPos = margin
+    }
+
+    doc.setFontSize(12)
+    doc.setFont('helvetica', 'bold')
+    doc.text('AI RECOMMENDATIONS', margin, yPos)
+    
+    yPos += 8
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    reportData.recommendations.forEach((rec, index) => {
+      const lines = doc.splitTextToSize(`${index + 1}. ${rec}`, pageWidth - 2 * margin - 10)
+      lines.forEach((line: string) => {
+        if (yPos > pageHeight - 30) {
+          doc.addPage()
+          yPos = margin
+        }
+        doc.text(line, margin + 5, yPos)
+        yPos += 5
+      })
+      yPos += 2
+    })
+
+    if (reportData.achievements.length > 0) {
+      yPos += 5
+      
+      if (yPos > pageHeight - 50) {
+        doc.addPage()
+        yPos = margin
+      }
+
+      doc.setFillColor(255, 245, 220)
+      doc.roundedRect(margin, yPos, pageWidth - 2 * margin, 8 + reportData.achievements.length * 6, 3, 3, 'F')
+      
+      doc.setTextColor(180, 120, 0)
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.text('ACHIEVEMENTS', margin + 5, yPos + 6)
+      
+      yPos += 12
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.setTextColor(50, 50, 50)
+      reportData.achievements.forEach((achievement) => {
+        doc.text(`• ${achievement}`, margin + 5, yPos)
+        yPos += 6
+      })
+    }
+
+    doc.setTextColor(150, 150, 150)
+    doc.setFontSize(8)
+    doc.text('Smart Energy Copilot - AI-Powered Energy Management', pageWidth / 2, pageHeight - 10, { align: 'center' })
+
+    doc.save(`energy-report-${new Date().toISOString().split('T')[0]}.pdf`)
+
+    toast.success('PDF report downloaded successfully', {
+      description: 'Your energy report has been saved as PDF'
     })
   }
 
@@ -141,10 +287,16 @@ AI-Powered Energy Management
           <h2 className="text-3xl font-bold tracking-tight">Energy Reports</h2>
           <p className="text-muted-foreground">Comprehensive analysis of your energy usage</p>
         </div>
-        <Button onClick={handleDownloadReport} className="gap-2">
-          <Download className="w-4 h-4" />
-          Download Report
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleDownloadTxtReport} variant="outline" className="gap-2">
+            <FileText className="w-4 h-4" />
+            TXT
+          </Button>
+          <Button onClick={handleDownloadPdfReport} className="gap-2">
+            <FilePdf className="w-4 h-4" />
+            PDF
+          </Button>
+        </div>
       </div>
 
       <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-background">
