@@ -247,8 +247,9 @@ export function UserManagementPanel() {
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
+                {/* FIX: Use ensureDate to handle date strings from useKV */}
                 <p className="text-xs text-muted-foreground">
-                  Last login: {user.lastLogin.toLocaleDateString()} {user.lastLogin.toLocaleTimeString()}
+                  Last login: {ensureDate(user.lastLogin).toLocaleDateString()} {ensureDate(user.lastLogin).toLocaleTimeString()}
                 </p>
               </div>
 
@@ -297,11 +298,12 @@ export function UserManagementPanel() {
                   <p className="font-medium">{invitation.email}</p>
                   <div className="flex items-center gap-2 mt-1">
                     {getRoleBadge(invitation.role)}
+                    {/* FIX: Use ensureDate for invitation dates as well */}
                     <span className="text-xs text-muted-foreground">
-                      Invited {invitation.invitedAt.toLocaleDateString()}
+                      Invited {ensureDate(invitation.invitedAt).toLocaleDateString()}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      Expires {invitation.expiresAt.toLocaleDateString()}
+                      Expires {ensureDate(invitation.expiresAt).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -386,3 +388,4 @@ export function UserManagementPanel() {
     </div>
   )
 }
+

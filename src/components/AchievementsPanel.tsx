@@ -30,16 +30,18 @@ export function AchievementsPanel({ achievements }: AchievementsPanelProps) {
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null)
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
 
+  // FIX: Convert strings to Date objects before calling .getTime()
   const sortedAchievements = [...achievements].sort(
-    (a, b) => b.unlockedAt.getTime() - a.unlockedAt.getTime()
+    (a, b) => new Date(b.unlockedAt).getTime() - new Date(a.unlockedAt).getTime()
   )
 
+  // FIX: Use sortedAchievements here so the UI displays items in order
   const achievementsByCategory = {
-    savings: achievements.filter(a => a.category === 'savings'),
-    efficiency: achievements.filter(a => a.category === 'efficiency'),
-    consistency: achievements.filter(a => a.category === 'consistency'),
-    milestone: achievements.filter(a => a.category === 'milestone'),
-    environmental: achievements.filter(a => a.category === 'environmental')
+    savings: sortedAchievements.filter(a => a.category === 'savings'),
+    efficiency: sortedAchievements.filter(a => a.category === 'efficiency'),
+    consistency: sortedAchievements.filter(a => a.category === 'consistency'),
+    milestone: sortedAchievements.filter(a => a.category === 'milestone'),
+    environmental: sortedAchievements.filter(a => a.category === 'environmental')
   }
 
   const tierCounts = {
@@ -219,8 +221,9 @@ export function AchievementsPanel({ achievements }: AchievementsPanelProps) {
                               </div>
                               <div>
                                 <p className="font-semibold">{achievement.title}</p>
+                                {/* FIX: Ensure date object for formatDistanceToNow */}
                                 <p className="text-xs text-muted-foreground">
-                                  {formatDistanceToNow(achievement.unlockedAt, { addSuffix: true })}
+                                  {formatDistanceToNow(new Date(achievement.unlockedAt), { addSuffix: true })}
                                 </p>
                               </div>
                             </div>
@@ -304,3 +307,4 @@ export function AchievementsPanel({ achievements }: AchievementsPanelProps) {
     </div>
   )
 }
+
