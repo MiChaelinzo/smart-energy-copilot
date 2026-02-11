@@ -1,6 +1,6 @@
 # Smart Energy Copilot v3.4 - AI-Powered Energy Management
 
-A comprehensive web dashboard for monitoring and controlling an AI-powered smart energy management system with **real Tuya Cloud API integration**, **weather-based optimization**, **multi-user role management**, AI adaptive scheduling, voice control, real-time pricing optimization, predictive maintenance, and shareable achievements.
+- A comprehensive web dashboard for monitoring and controlling an AI-powered smart energy management system with **real Tuya Cloud API integration**, **weather-based optimization**, **multi-user role management**, AI adaptive scheduling, voice control, real-time pricing optimization, predictive maintenance, and shareable achievements.
 
 **Watch the DEMO video** 👇🏻⏬⏯️
 
