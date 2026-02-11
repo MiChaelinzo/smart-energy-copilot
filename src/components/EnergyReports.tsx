@@ -1,12 +1,13 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Device, EnergyGoal } from '@/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { FileText, TrendUp, Lightning, Leaf, Trophy, Sparkle, FilePdf } from '@phosphor-icons/react'
+import { FileText, TrendUp, Lightning, Leaf, Trophy, Sparkle, FilePdf, Envelope } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { jsPDF } from 'jspdf'
+import { EmailReportDialog } from './EmailReportDialog'
 
 interface EnergyReportsProps {
   devices: Device[]
@@ -14,6 +15,8 @@ interface EnergyReportsProps {
 }
 
 export function EnergyReports({ devices, goals }: EnergyReportsProps) {
+  const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false)
+
   const reportData = useMemo(() => {
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
@@ -288,11 +291,15 @@ AI-Powered Energy Management
           <p className="text-muted-foreground">Comprehensive analysis of your energy usage</p>
         </div>
         <div className="flex gap-2">
+          <Button onClick={() => setIsEmailDialogOpen(true)} variant="default" size="sm" className="gap-2">
+            <Envelope className="w-4 h-4" weight="fill" />
+            Email
+          </Button>
           <Button onClick={handleDownloadTxtReport} variant="outline" size="sm" className="gap-2">
             <FileText className="w-4 h-4" />
             TXT
           </Button>
-          <Button onClick={handleDownloadPdfReport} size="sm" className="gap-2">
+          <Button onClick={handleDownloadPdfReport} variant="outline" size="sm" className="gap-2">
             <FilePdf className="w-4 h-4" />
             PDF
           </Button>
@@ -449,6 +456,12 @@ AI-Powered Energy Management
           </CardContent>
         </Card>
       )}
+
+      <EmailReportDialog
+        isOpen={isEmailDialogOpen}
+        onClose={() => setIsEmailDialogOpen(false)}
+        reportData={reportData}
+      />
     </div>
   )
 }

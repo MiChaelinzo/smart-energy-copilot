@@ -69,11 +69,11 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Success criteria**: Cost calculations are accurate, breakdowns are clear, projections match actual bills, tips are actionable
 
 ### Energy Reports Generator
-- **Functionality**: Automated generation of comprehensive energy reports with downloadable summaries, insights, and recommendations
-- **Purpose**: Provides professional documentation of energy usage for tracking, sharing, or record-keeping
-- **Trigger**: User navigates to reports section or clicks download
-- **Progression**: View report summary → Review key metrics → Read recommendations → Check achievements → Download report file
-- **Success criteria**: Reports contain accurate data, insights are valuable, downloads work reliably, format is readable
+- **Functionality**: Automated generation of comprehensive energy reports with downloadable summaries, email delivery, and insights with recommendations
+- **Purpose**: Provides professional documentation of energy usage for tracking, sharing, or record-keeping with convenient delivery options
+- **Trigger**: User navigates to reports section and clicks download or email button
+- **Progression**: View report summary → Review key metrics → Read recommendations → Check achievements → Choose delivery method → Download report file or email to recipient with customization options
+- **Success criteria**: Reports contain accurate data, insights are valuable, downloads work reliably, format is readable, emails deliver successfully with proper formatting
 
 ### Total Summary & Aggregation
 - **Functionality**: Comprehensive overview displaying aggregated totals for power, costs, savings, carbon impact, device breakdowns, room-level analysis, device type analysis, time-of-use rates, environmental equivalencies, and efficiency insights
@@ -183,6 +183,9 @@ This requires multiple interconnected features including real-time monitoring, d
 - **Schedule Conflicts**: Detect overlapping schedules for same device, warn users, allow priority setting
 - **Cost Data Unavailable**: Use default rate estimates, allow manual rate configuration, show clear disclaimers
 - **Report Generation During Low Data Period**: Generate report with available data, note incomplete period, provide partial insights
+- **Email Delivery Failures**: Show clear error messages, provide retry option, validate email addresses before sending
+- **Invalid Email Addresses**: Validate email format in real-time, prevent submission with helpful error messaging
+- **Email Without Recipients**: Require at least one recipient, show validation error if field is empty
 - **Zero Power Consumption**: Handle edge case where all devices are off, show "idle state" messaging with encouragement
 - **Comparison with No Previous Data**: Display message that historical data not available, encourage continued usage for future comparisons
 - **Electricity Rate Not Found**: Fallback to average rate if current time doesn't match any rate period
@@ -285,6 +288,8 @@ Animations should feel responsive and purposeful, reinforcing the sense of a rea
   - SlidersHorizontal (adjust settings),
   - Download (export/download),
   - FileText (reports),
+  - Envelope (email),
+  - PaperPlaneTilt (send),
   - Receipt (billing),
   - CheckCircle (completion),
   - Brain (AI/machine learning),
