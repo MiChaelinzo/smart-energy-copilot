@@ -34,6 +34,7 @@ import {
   UserInvitation,
   validateRoleHierarchy
 } from '@/lib/userManagement'
+import { ensureDate } from '@/lib/utils'
 import { toast } from 'sonner'
 
 export function UserManagementPanel() {
