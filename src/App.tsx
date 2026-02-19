@@ -21,6 +21,7 @@ import { ElectricityPricingPanel } from '@/components/ElectricityPricingPanel'
 import { MaintenanceAlertsPanel } from '@/components/MaintenanceAlertsPanel'
 import { AchievementsPanel } from '@/components/AchievementsPanel'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
+import { LoginScreen } from '@/components/LoginScreen'
 import { TuyaIntegration } from '@/components/TuyaIntegration'
 import { AdaptiveScheduling } from '@/components/AdaptiveScheduling'
 import { TabSearch } from '@/components/TabSearch'
@@ -50,6 +51,7 @@ import {
 import { Device, SmartScene, Notification, EnergyGoal, DeviceSchedule, ElectricityRate, MaintenanceAlert, Achievement, TuyaCredentials, TuyaDevice, AdaptiveSchedule, AIScheduleRecommendation } from '@/types'
 import { tuyaDeviceDiscovery } from '@/lib/tuyaApi'
 import { generateAIScheduleRecommendations, convertRecommendationToSchedule } from '@/lib/aiScheduling'
+import { getSession, logoutUser, getUserKVPrefix, type AuthUser } from '@/lib/auth'
 import { 
   Lightning, 
   BellRinging, 
@@ -71,23 +73,32 @@ import {
   Cloud,
   Users,
   Sparkle,
-  ChartLineUp
+  ChartLineUp,
+  SignOut,
+  UserCircle
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 
 function App() {
-  const [devices, setDevices] = useKV<Device[]>('energy-devices', MOCK_DEVICES)
-  const [scenes, setScenes] = useKV<SmartScene[]>('energy-scenes', MOCK_SCENES)
-  const [notifications, setNotifications] = useKV<Notification[]>('energy-notifications', MOCK_NOTIFICATIONS)
-  const [goals, setGoals] = useKV<EnergyGoal[]>('energy-goals', MOCK_GOALS)
-  const [schedules, setSchedules] = useKV<DeviceSchedule[]>('device-schedules', MOCK_SCHEDULES)
-  const [electricityRates] = useKV<ElectricityRate[]>('electricity-rates', MOCK_ELECTRICITY_RATES)
-  const [maintenanceAlerts, setMaintenanceAlerts] = useKV<MaintenanceAlert[]>('maintenance-alerts', MOCK_MAINTENANCE_ALERTS)
-  const [achievements] = useKV<Achievement[]>('achievements', MOCK_ACHIEVEMENTS)
-  const [hasCompletedWelcome, setHasCompletedWelcome] = useKV<boolean>('has-completed-welcome', false)
-  const [tuyaCredentials, setTuyaCredentials] = useKV<TuyaCredentials | null>('tuya-credentials', null)
-  const [adaptiveSchedules, setAdaptiveSchedules] = useKV<AdaptiveSchedule[]>('adaptive-schedules', [])
-  const [aiRecommendations, setAiRecommendations] = useKV<AIScheduleRecommendation[]>('ai-recommendations', [])
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null)
+  const [authChecked, setAuthChecked] = useState(false)
+  const [isDemoMode, setIsDemoMode] = useState(false)
+
+  // Determine KV key prefix based on logged-in user
+  const kvPrefix = getUserKVPrefix(authUser?.id ?? null)
+
+  const [devices, setDevices] = useKV<Device[]>(`${kvPrefix}energy-devices`, MOCK_DEVICES)
+  const [scenes, setScenes] = useKV<SmartScene[]>(`${kvPrefix}energy-scenes`, MOCK_SCENES)
+  const [notifications, setNotifications] = useKV<Notification[]>(`${kvPrefix}energy-notifications`, MOCK_NOTIFICATIONS)
+  const [goals, setGoals] = useKV<EnergyGoal[]>(`${kvPrefix}energy-goals`, MOCK_GOALS)
+  const [schedules, setSchedules] = useKV<DeviceSchedule[]>(`${kvPrefix}device-schedules`, MOCK_SCHEDULES)
+  const [electricityRates] = useKV<ElectricityRate[]>(`${kvPrefix}electricity-rates`, MOCK_ELECTRICITY_RATES)
+  const [maintenanceAlerts, setMaintenanceAlerts] = useKV<MaintenanceAlert[]>(`${kvPrefix}maintenance-alerts`, MOCK_MAINTENANCE_ALERTS)
+  const [achievements] = useKV<Achievement[]>(`${kvPrefix}achievements`, MOCK_ACHIEVEMENTS)
+  const [hasCompletedWelcome, setHasCompletedWelcome] = useKV<boolean>(`${kvPrefix}has-completed-welcome`, false)
+  const [tuyaCredentials, setTuyaCredentials] = useKV<TuyaCredentials | null>(`${kvPrefix}tuya-credentials`, null)
+  const [adaptiveSchedules, setAdaptiveSchedules] = useKV<AdaptiveSchedule[]>(`${kvPrefix}adaptive-schedules`, [])
+  const [aiRecommendations, setAiRecommendations] = useKV<AIScheduleRecommendation[]>(`${kvPrefix}ai-recommendations`, [])
   const [activeTab, setActiveTab] = useState('summary')
   const [showNotifications, setShowNotifications] = useState(false)
   const [showChat, setShowChat] = useState(false)
@@ -97,7 +108,18 @@ function App() {
 
   const unreadCount = (notifications || []).filter(n => !n.read).length
 
+  // Check for existing session on mount
   useEffect(() => {
+    getSession().then((session) => {
+      if (session) {
+        setAuthUser(session)
+      }
+      setAuthChecked(true)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!authChecked) return
     const timer = setTimeout(() => {
       setIsLoading(false)
       if (hasCompletedWelcome === false) {
@@ -105,7 +127,7 @@ function App() {
       }
     }, 100)
     return () => clearTimeout(timer)
-  }, [hasCompletedWelcome])
+  }, [hasCompletedWelcome, authChecked])
 
   const handleWelcomeComplete = () => {
     setShowWelcome(false)
@@ -116,6 +138,31 @@ function App() {
 
   const handleReplayWelcomeTour = () => {
     setShowWelcome(true)
+    setHasCompletedWelcome(false)
+  }
+
+  const handleLogin = (user: AuthUser) => {
+    setAuthUser(user)
+    setIsDemoMode(false)
+  }
+
+  const handleDemoMode = () => {
+    setAuthUser(null)
+    setIsDemoMode(true)
+  }
+
+  const handleLogout = async () => {
+    await logoutUser()
+    setAuthUser(null)
+    setIsDemoMode(false)
+    setShowWelcome(false)
+    setHasCompletedWelcome(false)
+    toast.info('Signed out successfully')
+  }
+
+  const handleExitDemo = () => {
+    setIsDemoMode(false)
+    setShowWelcome(false)
     setHasCompletedWelcome(false)
   }
 
@@ -348,7 +395,7 @@ function App() {
     })
   }, [devices, setGoals])
 
-  if (isLoading) {
+  if (isLoading || !authChecked) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -356,6 +403,16 @@ function App() {
           <p className="text-muted-foreground">Loading Smart Energy Copilot...</p>
         </div>
       </div>
+    )
+  }
+
+  // Show login screen if not authenticated and not in demo mode
+  if (!authUser && !isDemoMode) {
+    return (
+      <>
+        <Toaster />
+        <LoginScreen onLogin={handleLogin} onDemoMode={handleDemoMode} />
+      </>
     )
   }
 
@@ -388,6 +445,31 @@ function App() {
               </div>
 
               <div className="flex items-center gap-3">
+                {authUser ? (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card border border-border/50">
+                    <UserCircle className="w-5 h-5 text-primary" weight="fill" />
+                    <span className="text-sm font-medium hidden sm:inline">{authUser.displayName}</span>
+                    <button
+                      onClick={handleLogout}
+                      className="p-1 rounded hover:bg-accent/20 transition-colors ml-1"
+                      title="Sign out"
+                    >
+                      <SignOut className="w-4 h-4 text-muted-foreground" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-card border border-border/50">
+                    <Lightning className="w-4 h-4 text-warning" weight="fill" />
+                    <span className="text-sm font-medium hidden sm:inline">Demo Mode</span>
+                    <button
+                      onClick={handleExitDemo}
+                      className="p-1 rounded hover:bg-accent/20 transition-colors ml-1"
+                      title="Exit demo mode"
+                    >
+                      <SignOut className="w-4 h-4 text-muted-foreground" />
+                    </button>
+                  </div>
+                )}
                 <button
                   onClick={() => setShowNotifications(!showNotifications)}
                   className="relative p-2 rounded-lg hover:bg-accent/10 transition-all duration-300 hover:scale-110"
