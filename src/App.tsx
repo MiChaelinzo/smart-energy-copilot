@@ -160,6 +160,12 @@ function App() {
     toast.info('Signed out successfully')
   }
 
+  const handleExitDemo = () => {
+    setIsDemoMode(false)
+    setShowWelcome(false)
+    setHasCompletedWelcome(false)
+  }
+
   const handleDeviceToggle = (deviceId: string) => {
     setDevices((currentDevices) => {
       if (!currentDevices) return MOCK_DEVICES
@@ -456,9 +462,9 @@ function App() {
                     <Lightning className="w-4 h-4 text-warning" weight="fill" />
                     <span className="text-sm font-medium hidden sm:inline">Demo Mode</span>
                     <button
-                      onClick={handleLogout}
+                      onClick={handleExitDemo}
                       className="p-1 rounded hover:bg-accent/20 transition-colors ml-1"
-                      title="Sign in"
+                      title="Exit demo mode"
                     >
                       <SignOut className="w-4 h-4 text-muted-foreground" />
                     </button>

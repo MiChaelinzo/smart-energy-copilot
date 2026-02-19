@@ -10,18 +10,40 @@ export interface StoredUser {
   email: string
   displayName: string
   passwordHash: string
+  salt: string
   createdAt: string
 }
 
 const USERS_STORE_KEY = 'auth-users'
 const SESSION_KEY = 'auth-session'
 
-async function hashPassword(password: string): Promise<string> {
+async function hashPassword(password: string, salt: string): Promise<string> {
   const encoder = new TextEncoder()
-  const data = encoder.encode(password)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  )
+  const derivedBits = await crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      salt: encoder.encode(salt),
+      iterations: 100000,
+      hash: 'SHA-256'
+    },
+    keyMaterial,
+    256
+  )
+  const hashArray = Array.from(new Uint8Array(derivedBits))
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+function generateSalt(): string {
+  const array = new Uint8Array(16)
+  crypto.getRandomValues(array)
+  return Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 async function getStoredUsers(): Promise<StoredUser[]> {
@@ -48,12 +70,14 @@ export async function registerUser(
     throw new Error('An account with this email already exists')
   }
 
-  const passwordHash = await hashPassword(password)
+  const salt = generateSalt()
+  const passwordHash = await hashPassword(password, salt)
   const newUser: StoredUser = {
-    id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+    id: crypto.randomUUID(),
     email,
     displayName,
     passwordHash,
+    salt,
     createdAt: new Date().toISOString()
   }
 
@@ -76,10 +100,14 @@ export async function loginUser(
   password: string
 ): Promise<AuthUser> {
   const users = await getStoredUsers()
-  const passwordHash = await hashPassword(password)
 
-  const user = users.find(u => u.email === email && u.passwordHash === passwordHash)
+  const user = users.find(u => u.email === email)
   if (!user) {
+    throw new Error('Invalid email or password')
+  }
+
+  const passwordHash = await hashPassword(password, user.salt)
+  if (passwordHash !== user.passwordHash) {
     throw new Error('Invalid email or password')
   }
 
