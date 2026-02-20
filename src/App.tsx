@@ -114,20 +114,26 @@ function App() {
       if (session) {
         setAuthUser(session)
       }
+    }).catch(() => {
+      // Session check failed — proceed as unauthenticated
+    }).finally(() => {
       setAuthChecked(true)
     })
   }, [])
 
   useEffect(() => {
     if (!authChecked) return
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-      if (hasCompletedWelcome === false) {
-        setShowWelcome(true)
-      }
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [hasCompletedWelcome, authChecked])
+    setIsLoading(false)
+  }, [authChecked])
+
+  useEffect(() => {
+    if (!authChecked || isLoading) return
+    if (hasCompletedWelcome === false) {
+      setShowWelcome(true)
+    } else {
+      setShowWelcome(false)
+    }
+  }, [hasCompletedWelcome, authChecked, isLoading])
 
   const handleWelcomeComplete = () => {
     setShowWelcome(false)
