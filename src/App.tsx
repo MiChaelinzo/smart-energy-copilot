@@ -111,7 +111,7 @@ function App() {
   // Check for existing session on mount
   useEffect(() => {
     let cancelled = false
-    ;(async () => {
+    void (async () => {
       try {
         const session = await getSession()
         if (!cancelled && session) {
