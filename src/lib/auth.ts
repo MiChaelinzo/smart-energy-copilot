@@ -130,7 +130,16 @@ export async function getSession(): Promise<AuthUser | null> {
   try {
     const timeout = new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 5000))
     const session = await Promise.race([window.spark.kv.get(SESSION_KEY), timeout])
-    return session ? (session as AuthUser) : null
+    if (
+      session &&
+      typeof session === 'object' &&
+      typeof (session as AuthUser).id === 'string' &&
+      typeof (session as AuthUser).email === 'string' &&
+      typeof (session as AuthUser).displayName === 'string'
+    ) {
+      return session as AuthUser
+    }
+    return null
   } catch {
     return null
   }
