@@ -53,7 +53,7 @@
         "d3": "^7.9.0",
         "date-fns": "^3.6.0",
         "embla-carousel-react": "^8.5.2",
-        "framer-motion": "^12.6.2",
+        "framer-motion": "^12.34.3",
         "input-otp": "^1.4.2",
         "jspdf": "^4.1.0",
         "lucide-react": "^0.484.0",
