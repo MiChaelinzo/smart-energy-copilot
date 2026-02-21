@@ -110,21 +110,24 @@ function App() {
 
   // Check for existing session on mount
   useEffect(() => {
-    getSession().then((session) => {
-      if (session) {
-        setAuthUser(session)
+    let cancelled = false
+    void (async () => {
+      try {
+        const session = await getSession()
+        if (!cancelled && session) {
+          setAuthUser(session)
+        }
+      } catch {
+        // Session check failed — proceed as unauthenticated
+      } finally {
+        if (!cancelled) {
+          setAuthChecked(true)
+          setIsLoading(false)
+        }
       }
-    }).catch(() => {
-      // Session check failed — proceed as unauthenticated
-    }).finally(() => {
-      setAuthChecked(true)
-    })
+    })()
+    return () => { cancelled = true }
   }, [])
-
-  useEffect(() => {
-    if (!authChecked) return
-    setIsLoading(false)
-  }, [authChecked])
 
   useEffect(() => {
     if (!authChecked || isLoading) return
